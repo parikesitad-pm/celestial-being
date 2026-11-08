@@ -21,9 +21,10 @@ ShellRoot {
             if (!Ui.island) Ui.toggle("island")
         }
         function island(): void { Ui.toggle("island") }
-        // 0 Music, 1 Calendar, 2 Focus, 3 Todo, 4 Notif, 5 Control, 6 System, 7 Hangar
+        // 0 Haro (music), 1 Mission (calendar), 2 Sortie (focus), 3 Orders (todo), 4 Comms (notifications), 5 Veda (system), 6 Hangar (apps)
         function tab(i: int): void { Ui.openIsland(i) }
-        function power(): void { Ui.openPower() }
+        function power(): void { Ui.openSheet("launch") }
+        function bridge(): void { Ui.openSheet("bridge") }
         function cc(): void { Ui.toggle("cc") }
         function screenshot(): void { Ui.toggle("shot") }
         function overview(): void { Ui.toggle("overview") }

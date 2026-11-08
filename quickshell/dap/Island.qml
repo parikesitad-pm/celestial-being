@@ -23,7 +23,7 @@ PanelWindow {
 
     readonly property string mode: Ui.island ? "open" : (Ui.toast ? "toast" : "pill")
     readonly property bool narrow: !!screen && screen.width < 1300
-    readonly property var tabs: ["Music", "Calendar", "Focus", "Todo", "Notif", "Control", "System", "Hangar"]
+    readonly property var tabs: ["Haro", "Mission", "Sortie", "Orders", "Comms", "Veda", "Hangar"]
     readonly property int tab: Ui.islandTab
     property int lastTab: 0
     // Every tab enters the same way: a short slide from the side it came from, plus a fade.
@@ -40,8 +40,8 @@ PanelWindow {
         NumberAnimation { target: pages; property: "opacity"; to: 1; duration: 200; easing.type: Easing.OutCubic }
     }
     onModeChanged: {
-        if (mode !== "open") { Ui.power = false; return }
-        if (Ui.power) { header.play("CELESTIAL BEING // SESSION", true); return }
+        if (mode !== "open") { Ui.sheet = ""; return }
+        if (Ui.sheet !== "") { header.play("CELESTIAL BEING // " + (Ui.sheet === "launch" ? "LAUNCH BAY" : "BRIDGE"), true); return }
         if (tab === 0 && !Ui.player) Ui.islandTab = 1
         header.play("CELESTIAL BEING // PILOT dap_", true)
     }
@@ -51,12 +51,11 @@ PanelWindow {
     // Content fades in once the shape has mostly opened, and leaves fast.
     component Reveal: NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
 
-    // The Control tab grows to fit the control center, up to the screen height.
-    readonly property real chrome: 32 + header.implicitHeight + 46
-    readonly property real openHeight: Ui.power ? 32 + header.implicitHeight + 10 + powerSheet.implicitHeight + 4
-        : tab === Ui.controlTab
-        ? Math.min(chrome + control.implicitHeight + 4, (screen ? screen.height : 1080) - 60)
-        : tab === 7 ? 470 : 388
+    // Sheets size to their content (Bridge up to the screen height); Hangar is taller.
+    readonly property real sheetChrome: 32 + header.implicitHeight + 10 + 4
+    readonly property real openHeight: Ui.sheet === "launch" ? sheetChrome + powerSheet.implicitHeight
+        : Ui.sheet === "bridge" ? Math.min(sheetChrome + control.implicitHeight, (screen ? screen.height : 1080) - 60)
+        : tab === 6 ? 470 : 388
 
     // Body hanging from the top edge, with concave fillets into it. Drawn under the content.
     IslandShape {
@@ -88,7 +87,7 @@ PanelWindow {
         id: shape
         anchors.horizontalCenter: parent.horizontalCenter
         // Hangar (apps only) opens extra wide.
-        width: win.mode === "open" ? (win.tab === 7 && !Ui.power ? 900 : 600) : win.mode === "toast" ? 460 : pill.implicitWidth + 40
+        width: win.mode === "open" ? (win.tab === 6 && Ui.sheet === "" ? 900 : 600) : win.mode === "toast" ? 460 : pill.implicitWidth + 40
         height: win.mode === "open" ? win.openHeight : win.mode === "toast" ? 64 : 36
         radius: win.mode === "open" ? 28 : win.mode === "toast" ? 24 : 18
         Behavior on width { Spring {} }
@@ -163,7 +162,7 @@ PanelWindow {
                 }
 
                 RowLayout {
-                    visible: !Ui.power
+                    visible: Ui.sheet === ""
                     Layout.fillWidth: true
                     spacing: 8
                     Item {
@@ -217,11 +216,25 @@ PanelWindow {
                 PowerSheet {
                     id: powerSheet
                     Layout.fillWidth: true
-                    visible: Ui.power
+                    visible: Ui.sheet === "launch"
+                }
+                Flickable {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    visible: Ui.sheet === "bridge"
+                    contentHeight: control.implicitHeight
+                    clip: true
+                    interactive: contentHeight > height
+                    ControlPanel {
+                        id: control
+                        width: parent.width
+                        shown: win.mode === "open" && Ui.sheet === "bridge"
+                        onShownChanged: if (shown) forceActiveFocus()
+                    }
                 }
 
                 StackLayout {
-                    visible: !Ui.power
+                    visible: Ui.sheet === ""
                     id: pages
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -232,19 +245,8 @@ PanelWindow {
                     NotchFocus {}
                     NotchTodo {}
                     NotchNotifs {}
-                    Flickable {
-                        contentHeight: control.implicitHeight
-                        clip: true
-                        interactive: contentHeight > height
-                        ControlPanel {
-                            id: control
-                            width: parent.width
-                            shown: win.mode === "open" && win.tab === Ui.controlTab
-                            onShownChanged: if (shown) forceActiveFocus()
-                        }
-                    }
                     NotchSystem {}
-                    NotchHangar { shown: win.mode === "open" && win.tab === 7 && !Ui.power }
+                    NotchHangar { shown: win.mode === "open" && win.tab === 6 && Ui.sheet === "" }
                 }
             }
         }

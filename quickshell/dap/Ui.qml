@@ -235,16 +235,15 @@ Singleton {
     property var now: new Date()
     SystemClock { id: clk; precision: SystemClock.Seconds; onDateChanged: s.now = clk.date }
 
-    function closeAll() { power = false; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
-    // The island hosts the control center and the other panels as tabs (see Island.tabs).
-    readonly property int controlTab: 5
-    // Session sheet (lock, logout, restart, shutdown) shown in the island instead of the tabs.
-    property bool power: false
-    function openPower() {
-        const was = island && power
+    function closeAll() { sheet = ""; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
+    // Island tabs (see Island.tabs): 0 Haro, 1 Mission, 2 Sortie, 3 Orders, 4 Comms, 5 Veda, 6 Hangar.
+    // Sheets shown in the island instead of the tabs: "bridge" (control center), "launch" (session).
+    property string sheet: ""
+    function openSheet(name) {
+        const was = island && sheet === name
         closeAll()
         if (was) return
-        power = true
+        sheet = name
         island = true
     }
     function openIsland(tab) {
@@ -254,7 +253,7 @@ Singleton {
         island = true
     }
     function toggle(name) {
-        if (name === "cc") { openIsland(controlTab); return }
+        if (name === "cc") { openSheet("bridge"); return }
         if (clearedName === name && Date.now() - clearedAt < 250) return   // click-outside just closed it
         const was = s[name]
         closeAll()

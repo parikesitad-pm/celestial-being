@@ -8,7 +8,7 @@ import Quickshell.Services.SystemTray
 import Quickshell.Bluetooth
 
 // Vertical bar on the left edge, top to bottom: emblem (launcher), desktops, apps (the dock),
-// desktop name, tray, status, power. Status and power open the island's Control tab.
+// desktop name, tray, status, power. Status (gear) opens the Bridge sheet, power the Launch Bay.
 PanelWindow {
     id: bar
     required property var modelData
@@ -194,10 +194,19 @@ PanelWindow {
 
             Sep {}
 
-            // Status; a click opens the control center tab.
+            // Status; a click on it or the gear opens the Bridge (control center) from the island.
             ColumnLayout {
                 Layout.alignment: Qt.AlignHCenter
                 spacing: 8
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: Theme.g(0xF0493)
+                    font.family: Theme.iconFont; font.pixelSize: 17
+                    color: Ui.sheet === "bridge" ? Theme.accent : Theme.text
+                    rotation: Ui.sheet === "bridge" ? 90 : 0
+                    Behavior on rotation { NumberAnimation { duration: 320; easing.type: Easing.OutExpo } }
+                    Behavior on color { ColorAnimation { duration: 180 } }
+                }
                 CcPop {
                     Layout.alignment: Qt.AlignHCenter
                     text: Theme.g(bar.muted ? 0xF075F : 0xF057E); color: Theme.purple
@@ -211,10 +220,18 @@ PanelWindow {
                 }
                 CcPop {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Theme.g(Ui.lan === "up" ? 0xF0318 : (Ui.ssid !== "" ? 0xF0928 : 0xF092D))
-                    color: Ui.lan === "up" || Ui.ssid !== "" ? Theme.text : Theme.subtext
-                    watch: Ui.ssid + Ui.lan
-                    ping: Ui.ssid !== "" || Ui.lan === "up"
+                    visible: Ui.lan !== ""
+                    text: Theme.g(Ui.lan === "up" ? 0xF0318 : 0xF0319)
+                    color: Ui.lan === "up" ? Theme.text : Theme.subtext
+                    watch: Ui.lan
+                    ping: Ui.lan === "up"
+                }
+                CcPop {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: Theme.g(Ui.ssid !== "" ? 0xF0928 : 0xF092D)
+                    color: Ui.ssid !== "" ? Theme.text : Theme.subtext
+                    watch: Ui.ssid
+                    ping: Ui.ssid !== ""
                 }
                 CcPop {
                     Layout.alignment: Qt.AlignHCenter
@@ -230,7 +247,7 @@ PanelWindow {
                     font.family: Theme.font; font.pixelSize: 10; font.weight: Font.Bold
                     color: Theme.subtext
                 }
-                TapHandler { onTapped: Ui.openIsland(Ui.controlTab) }
+                TapHandler { onTapped: Ui.openSheet("bridge") }
                 HoverHandler { cursorShape: Qt.PointingHandCursor }
             }
 
@@ -245,7 +262,7 @@ PanelWindow {
                     font.family: Theme.iconFont; font.pixelSize: 17
                     color: Theme.red
                 }
-                MouseArea { id: power; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Ui.openPower() }
+                MouseArea { id: power; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: Ui.openSheet("launch") }
             }
         }
     }

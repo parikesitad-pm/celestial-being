@@ -22,7 +22,7 @@ local browser     = "zen-browser"
 local script      = os.getenv("HOME") .. "/.config/hypr/scripts/"
 
 ------------------ ENV (GPU: Intel iGPU renders desktop, NVIDIA only on demand) ------------------
-hl.env("XCURSOR_THEME", "Bibata-Modern-Ice")
+hl.env("XCURSOR_THEME", "GN-Sonar")  -- sonar ring arrow; other cursors inherit Bibata-Modern-Ice
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("AQ_DRM_DEVICES", "/dev/dri/igpu:/dev/dri/dgpu")  -- symlinks created by udev rule in install.sh
@@ -47,7 +47,7 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("blueman-applet")
   hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
   hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme candy-icons")
-  hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Ice")
+  hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme GN-Sonar")
 end)
 
 ------------------ LOOK & FEEL ------------------

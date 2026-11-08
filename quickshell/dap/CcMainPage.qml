@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 
-// Control center main page: toggles, sliders, power profiles, displays, now playing, session.
+// Bridge (control center) main page: toggles, sliders, power profiles, displays, now playing, GN Sense.
 Flow {
     id: mainPage
     required property var cc
@@ -146,31 +146,8 @@ Flow {
 
     // Power profile and keyboard lighting live in gn-sense (also on the keyboard's N key).
     Tile {
-        width: mainPage.span(6)
-        glyph: Theme.g(0xF030C); title: "GN Sense"; sub: "Power · RGB"
+        width: mainPage.span(12)
+        glyph: Theme.g(0xF030C); title: "GN Sense"; sub: "Power profile · keyboard RGB"
         onClicked: { Ui.island = false; Ui.sh(Quickshell.env("HOME") + "/.local/bin/gn-sense") }
-    }
-    Tile {
-        width: mainPage.span(6); glyph: Theme.g(0xF033E); title: "Lock"
-        onClicked: { Ui.island = false; Ui.sh(Theme.scripts + "lock.sh") }
-    }
-
-    // session: first click arms the tile ("Confirm?"), second click within 3 s runs it
-    Repeater {
-        model: [
-            { k: "logout",   g: 0xF08B, t: "Logout",   c: "command -v hyprshutdown >/dev/null && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'" },
-            { k: "reboot",   g: 0xF021, t: "Restart",  c: "systemctl reboot" },
-            { k: "poweroff", g: 0xF011, t: "Shutdown", c: "systemctl poweroff" }
-        ]
-        delegate: Tile {
-            required property var modelData
-            width: mainPage.span(4); compact: true
-            glyph: Theme.g(modelData.g); title: mainPage.cc.armed === modelData.k ? "Confirm?" : modelData.t
-            on: mainPage.cc.armed === modelData.k; onColor: Theme.red
-            onClicked: {
-                if (mainPage.cc.armed === modelData.k) { mainPage.cc.armed = ""; Ui.island = false; Ui.sh(modelData.c) }
-                else { mainPage.cc.armed = modelData.k; mainPage.cc.armLater() }
-            }
-        }
     }
 }

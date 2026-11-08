@@ -5,9 +5,9 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
-
-// Control center, hosted in the island's Control tab: toggles, sliders, power profiles, displays,
-// session, and the Wi-Fi / audio / display / Bluetooth pages.
+// Control center, shown as the island's Bridge sheet: toggles, sliders, power profiles, displays,
+// GN Sense, and the Wi-Fi / audio / display / Bluetooth pages.
+// GN Sense, and the Wi-Fi / audio / display / Bluetooth pages. Shown as the island's Bridge sheet.
 Item {
     id: win
     property bool shown: false
@@ -28,9 +28,6 @@ Item {
     property string dispMode: "none"      // extend | mirror | pc | none
     property bool dispPortrait: false
     property string dispSide: "right"     // external monitor relative to the laptop
-    property string armed: ""             // session tile waiting for a second click
-    Timer { id: armTimer; interval: 3000; onTriggered: win.armed = "" }
-    function armLater() { armTimer.restart() }
     property real brightness: 50
     function setBrightnessLater() { briDebounce.restart() }
     property string page: "main"          // main | wifi | audio | display | bluetooth
@@ -98,7 +95,6 @@ Item {
 
     // Refresh live state whenever the Control tab is shown.
     onShownChanged: {
-        armed = ""
         if (!shown) { goMain(); return }
         rWifi.running = true; rProf.running = true; rBri.running = true; rDisp.running = true
     }

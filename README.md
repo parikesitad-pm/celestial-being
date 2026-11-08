@@ -31,6 +31,7 @@ Pilot callsigns, GN green, anime blue and Trans-Am red, caution tape. No rainbow
 | `kde/kdeglobals` | `~/.config/kdeglobals` |
 | `kde/DapGN.colors` | `~/.local/share/color-schemes/DapGN.colors` |
 | `qt6ct/` | `~/.config/qt6ct/` |
+| `icons/GN-Sonar/` | `~/.local/share/icons/GN-Sonar/` (GN green sonar-ring arrow; other cursors inherit Bibata-Modern-Ice. Rebuild with `cursor/build-gn-sonar.py`) |
 | `spotify-player/` | `~/.config/spotify-player/` (Celestial Being theme for the `spotify_player` terminal client, optional) |
 
 ## Install
@@ -68,15 +69,16 @@ Each command decodes out of noise before it runs. `sudo`/`doas`/`run0` get a cau
 
 ## Layout: side bar and island
 
-- **Side bar** (`SideBar.qml`, left edge): emblem (app menu), desktops, apps (pinned first, then running; right click for pin, new window, close), the desktop name, tray, status and power. Status opens the island's Control tab; power opens the session sheet.
-- **Island** (`Island.qml`, `IslandShape.qml`): hangs from the top edge with concave corners. Closed it shows the date, time, CPU, RAM and GPU; it grows out of the edge into tabs: Music, Calendar, Focus, Todo, Notif, Control, System, Hangar. `qs -c dap ipc call shell tab N` opens tab N (0 to 7).
-- **Control** (`ControlPanel.qml`): Wi-Fi, Bluetooth, appearance, NT-D, volume, mic, brightness, power profiles, displays, GN Sense, lock, session. The island grows to fit it.
-- **System** (`NotchSystem.qml`): gauges for CPU load, CPU temperature, memory and Iris Xe. The NVIDIA GPU is not read, since reading it wakes the card.
+- **Side bar** (`SideBar.qml`, left edge): emblem (app menu), desktops, apps (pinned first, then running; right click for pin, new window, close), the desktop name, tray, a gear with status (volume, Bluetooth, LAN, Wi-Fi, battery), and power. The gear opens the Bridge; power opens the Launch Bay.
+- **Island** (`Island.qml`, `IslandShape.qml`): hangs from the top edge with concave corners. Closed it shows the date, time, CPU, RAM and GPU; it grows out of the edge into tabs: Haro (music), Mission (calendar), Sortie (focus timer), Orders (todo), Comms (notifications), Veda (system), Hangar (apps). `qs -c dap ipc call shell tab N` opens tab N (0 to 6).
+- **Bridge** (`ControlPanel.qml`, a sheet, not a tab): Wi-Fi, Bluetooth, appearance, NT-D, volume, mic, brightness, power profiles, displays, GN Sense. The island grows to fit it. `qs -c dap ipc call shell bridge` (or `cc`) opens it.
+- **Veda** (`NotchSystem.qml`): gauges for CPU load, CPU temperature, memory and Iris Xe. The NVIDIA GPU is not read, since reading it wakes the card.
 - **Hangar** (`NotchHangar.qml`): every app, with search. The island opens extra wide on this tab. Type to filter, Enter launches the highlighted app, arrows move.
-- **Session sheet** (`PowerSheet.qml`): Lock runs at once; Logout, Restart and Shutdown need a second, explicit confirm under caution tape. `qs -c dap ipc call shell power` opens it.
+- **Launch Bay** (`PowerSheet.qml`, a sheet): Lock runs at once; Logout, Restart and Shutdown need a second, explicit confirm under caution tape. `qs -c dap ipc call shell power` opens it.
+- **Cursor:** GN-Sonar, a GN green dot and ring that sends out a sonar ping every 1.2 s.
 - **Colors:** window borders and the open island are anime blue, or red in Trans-Am (performance profile). The closed island is a still GN green ring. NT-D (Do Not Disturb) turns the ring psycho-frame red. The Wi-Fi and Bluetooth pages sweep a Zaku mono-eye while they load. On battery, a critical "GN particles low" alarm fires at 15% and 5%.
-- **GN Sense** (optional, [gn-sense](https://github.com/parikesitad-pm/gn-sense)): power profile and keyboard RGB panel for Acer Nitro and Predator laptops. `hyprland.lua` starts it and binds the keyboard's N key (keycode 433). Without gn-sense installed, both do nothing.
-- **Notifications:** the shell is the notification server (`NotificationServer` in `Ui.qml`); swaync is not started. `Super+N` opens the Notif tab. Action buttons are passed back to the sending app.
+- **GN Sense** (optional, [gn-sense](https://github.com/parikesitad-pm/gn-sense)): power profile and keyboard RGB panel for Acer Nitro and Predator laptops. `hyprland.lua` starts it and binds the keyboard's N key (keycode 433). With `"placement": "top"` in its settings it opens under the island. Without gn-sense installed, both do nothing.
+- **Notifications:** the shell is the notification server (`NotificationServer` in `Ui.qml`); swaync is not started. `Super+N` opens the Comms tab. Action buttons are passed back to the sending app.
 - **Calendar and alarms** (`Agenda.qml`, `Ics.js`): alarms are saved in `~/.local/state/dap-shell-alarms.json`. To show Google Calendar events, paste the calendar's "Secret address in iCal format" into `~/.config/dap-shell/gcal-ics-url` (mode 600). That address gives read access to the calendar, so keep it out of the repo.
 
 ## Displays and desktops
