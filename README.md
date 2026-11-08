@@ -6,13 +6,16 @@ prompt and app colors.
 
 Pilot callsigns, GN green, anime blue and Trans-Am red, caution tape. No rainbow.
 
+<p><img src="docs/screenshots/desktop.png" width="820" alt="Empty desktop: side bar on the left, closed island on top"></p>
 <p>
-  <img src="docs/screenshots/desktop.png" width="820" alt="Side bar and closed island">
+  <img src="docs/screenshots/bridge.png" width="405" alt="Bridge: control center sheet">
+  <img src="docs/screenshots/launch-bay.png" width="405" alt="Launch Bay: session sheet">
 </p>
 <p>
-  <img src="docs/screenshots/control.png" width="405" alt="Island Control tab">
-  <img src="docs/screenshots/system.png" width="405" alt="Island System tab">
+  <img src="docs/screenshots/veda.png" width="405" alt="Veda tab: system gauges">
+  <img src="docs/screenshots/cursors.png" width="405" alt="GN-Sonar cursors: sonar, GN Drive, lock-on">
 </p>
+<p><img src="docs/screenshots/hangar.png" width="820" alt="Hangar tab: app grid with search"></p>
 
 ## Contents
 
@@ -31,7 +34,7 @@ Pilot callsigns, GN green, anime blue and Trans-Am red, caution tape. No rainbow
 | `kde/kdeglobals` | `~/.config/kdeglobals` |
 | `kde/DapGN.colors` | `~/.local/share/color-schemes/DapGN.colors` |
 | `qt6ct/` | `~/.config/qt6ct/` |
-| `icons/GN-Sonar/` | `~/.local/share/icons/GN-Sonar/` (GN green sonar-ring arrow; other cursors inherit Bibata-Modern-Ice. Rebuild with `cursor/build-gn-sonar.py`) |
+| `icons/GN-Sonar/` | `~/.local/share/icons/GN-Sonar/` (sonar arrow, GN Drive busy, lock-on pointer; others inherit Bibata-Modern-Ice. Rebuild with `cursor/build-gn-sonar.py`) |
 | `spotify-player/` | `~/.config/spotify-player/` (Celestial Being theme for the `spotify_player` terminal client, optional) |
 
 ## Install
@@ -75,7 +78,7 @@ Each command decodes out of noise before it runs. `sudo`/`doas`/`run0` get a cau
 - **Veda** (`NotchSystem.qml`): gauges for CPU load, CPU temperature, memory and Iris Xe. The NVIDIA GPU is not read, since reading it wakes the card.
 - **Hangar** (`NotchHangar.qml`): every app, with search. The island opens extra wide on this tab. Type to filter, Enter launches the highlighted app, arrows move.
 - **Launch Bay** (`PowerSheet.qml`, a sheet): Lock runs at once; Logout, Restart and Shutdown need a second, explicit confirm under caution tape. `qs -c dap ipc call shell power` opens it.
-- **Cursor:** GN-Sonar, a GN green dot and ring that sends out a sonar ping every 1.2 s.
+- **Cursors (GN-Sonar):** the arrow is a GN green dot and ring that sends a sonar ping every 1.2 s; busy and loading spin a GN Drive arc; links and buttons show a lock-on reticle. Text, resize and move cursors come from Bibata.
 - **Colors:** window borders and the open island are anime blue, or red in Trans-Am (performance profile). The closed island is a still GN green ring. NT-D (Do Not Disturb) turns the ring psycho-frame red. The Wi-Fi and Bluetooth pages sweep a Zaku mono-eye while they load. On battery, a critical "GN particles low" alarm fires at 15% and 5%.
 - **GN Sense** (optional, [gn-sense](https://github.com/parikesitad-pm/gn-sense)): power profile and keyboard RGB panel for Acer Nitro and Predator laptops. `hyprland.lua` starts it and binds the keyboard's N key (keycode 433). With `"placement": "top"` in its settings it opens under the island. Without gn-sense installed, both do nothing.
 - **Notifications:** the shell is the notification server (`NotificationServer` in `Ui.qml`); swaync is not started. `Super+N` opens the Comms tab. Action buttons are passed back to the sending app.

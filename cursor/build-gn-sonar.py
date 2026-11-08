@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-"""Build the GN-Sonar cursor theme: a GN green dot and ring with a sonar ping, as an animated
-Xcursor that replaces only the default arrow. Every other cursor is inherited from Bibata.
+"""Build the GN-Sonar cursor theme, three animated Xcursors in GN green:
+- arrow: dot and ring with a sonar ping;
+- busy and progress: a GN Drive arc spinning around the ring;
+- pointer (links, buttons): a lock-on reticle with four ticks.
+Text, resize and move cursors are inherited from Bibata.
 
 usage: build-gn-sonar.py <output dir>   (for example ~/.local/share/icons/GN-Sonar)
 """
@@ -43,6 +46,46 @@ def frame(size, t):
     return img.resize((size, size), Image.LANCZOS)
 
 
+def busy(size, t, dot=True):
+    s = size * SS
+    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    c, r = s / 2, s * 0.3
+    w = max(1, round(1.6 * SS * size / 24))
+    box = (c - r, c - r, c + r, c + r)
+    d.ellipse(box, outline=DARK + (150,), width=w + 2 * SS)
+    d.ellipse(box, outline=GREEN + (70,), width=w)
+    start = 360 * t
+    d.arc(box, start, start + 110, fill=GREEN + (255,), width=w + SS)
+    if dot:
+        r_dot = s * 0.075
+        d.ellipse((c - r_dot - SS, c - r_dot - SS, c + r_dot + SS, c + r_dot + SS), fill=DARK + (170,))
+        d.ellipse((c - r_dot, c - r_dot, c + r_dot, c + r_dot), fill=GREEN + (255,))
+    return img.resize((size, size), Image.LANCZOS)
+
+
+def lockon(size, t):
+    s = size * SS
+    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    c = s / 2
+    w = max(1, round(1.6 * SS * size / 24))
+    # The reticle breathes in a little, like it is acquiring the target.
+    r = s * (0.3 - 0.03 * math.sin(math.pi * t))
+    box = (c - r, c - r, c + r, c + r)
+    d.ellipse(box, outline=DARK + (150,), width=w + 2 * SS)
+    d.ellipse(box, outline=GREEN + (240,), width=w)
+    for ang in (0, 90, 180, 270):
+        a = math.radians(ang)
+        x0, y0 = c + math.cos(a) * (r + s * 0.04), c + math.sin(a) * (r + s * 0.04)
+        x1, y1 = c + math.cos(a) * (r + s * 0.16), c + math.sin(a) * (r + s * 0.16)
+        d.line((x0, y0, x1, y1), fill=DARK + (160,), width=w + 2 * SS)
+        d.line((x0, y0, x1, y1), fill=GREEN + (255,), width=w)
+    r_dot = s * 0.06
+    d.ellipse((c - r_dot, c - r_dot, c + r_dot, c + r_dot), fill=GREEN + (255,))
+    return img.resize((size, size), Image.LANCZOS)
+
+
 def argb_premultiplied(img):
     out = bytearray()
     raw = img.tobytes()
@@ -67,20 +110,30 @@ def xcursor(images):
     return b"Xcur" + struct.pack("<III", header, 0x10000, len(images)) + toc + chunks
 
 
+CURSORS = {
+    # file: (frame function, frames, delay ms, aliases)
+    "left_ptr": (frame, FRAMES, DELAY_MS, ("default", "arrow", "top_left_arrow", "left_arrow")),
+    "watch": (lambda size, t: busy(size, t, dot=False), 12, 60, ("wait",)),
+    "left_ptr_watch": (busy, 12, 60, ("progress", "half-busy")),
+    "hand2": (lockon, 10, 90, ("pointer", "hand1", "pointing_hand", "hand")),
+}
+
+
 def main():
     out = os.path.expanduser(sys.argv[1])
     cursors = os.path.join(out, "cursors")
     os.makedirs(cursors, exist_ok=True)
-    images = [(size, frame(size, i / FRAMES), DELAY_MS) for size in SIZES for i in range(FRAMES)]
-    with open(os.path.join(cursors, "left_ptr"), "wb") as f:
-        f.write(xcursor(images))
-    for alias in ("default", "arrow", "top_left_arrow", "left_arrow"):
-        link = os.path.join(cursors, alias)
-        if os.path.lexists(link):
-            os.remove(link)
-        os.symlink("left_ptr", link)
+    for name, (fn, frames, delay, aliases) in CURSORS.items():
+        images = [(size, fn(size, i / frames), delay) for size in SIZES for i in range(frames)]
+        with open(os.path.join(cursors, name), "wb") as f:
+            f.write(xcursor(images))
+        for alias in aliases:
+            link = os.path.join(cursors, alias)
+            if os.path.lexists(link):
+                os.remove(link)
+            os.symlink(name, link)
     with open(os.path.join(out, "index.theme"), "w") as f:
-        f.write("[Icon Theme]\nName=GN-Sonar\nComment=GN green sonar ring; other cursors from Bibata\nInherits=Bibata-Modern-Ice\n")
+        f.write("[Icon Theme]\nName=GN-Sonar\nComment=GN green sonar, GN Drive and lock-on cursors; others from Bibata\nInherits=Bibata-Modern-Ice\n")
     print("built", out)
 
 
