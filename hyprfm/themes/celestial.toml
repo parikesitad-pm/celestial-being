@@ -1,0 +1,14 @@
+# Celestial Being: GN green accent, anime blue surfaces, Trans-Am red for errors. No rainbow.
+[colors]
+base = "#070b14"
+mantle = "#0b1220"
+crust = "#04070d"
+surface = "#141c2e"
+overlay = "#1b2a4a"
+text = "#f2f6ff"
+subtext = "#a7b3cc"
+muted = "#3a4358"
+accent = "#2ee6a8"
+success = "#2ee6a8"
+warning = "#f2b705"
+error = "#ff2e63"

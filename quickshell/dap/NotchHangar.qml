@@ -13,23 +13,7 @@ ColumnLayout {
 
     onShownChanged: if (shown) { query = ""; input.text = ""; sel = 0; input.forceActiveFocus() }
 
-    readonly property var results: {
-        const q = query.trim().toLowerCase()
-        const all = DesktopEntries.applications.values.filter(e => !e.noDisplay)
-        if (q === "") return all.sort((a, b) => a.name.localeCompare(b.name))
-        const scored = []
-        for (const e of all) {
-            const n = e.name.toLowerCase()
-            let s = -1
-            if (n.startsWith(q)) s = 100
-            else if (n.includes(" " + q)) s = 80
-            else if (n.includes(q)) s = 60
-            else if ((e.genericName || "").toLowerCase().includes(q) || (e.comment || "").toLowerCase().includes(q)) s = 30
-            else if ((e.keywords || []).join(" ").toLowerCase().includes(q)) s = 20
-            if (s >= 0) scored.push({ e: e, s: s })
-        }
-        return scored.sort((a, b) => b.s - a.s || a.e.name.localeCompare(b.e.name)).map(x => x.e)
-    }
+    readonly property var results: Apps.search(query)
     onResultsChanged: { sel = 0; grid.positionViewAtBeginning() }
     function launch(e) { if (!e) return; Ui.island = false; e.execute() }
 

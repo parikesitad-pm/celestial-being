@@ -37,7 +37,7 @@ hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 ------------------ AUTOSTART ------------------
 hl.on("hyprland.start", function()
   hl.exec_cmd("hyprpaper")
-  hl.exec_cmd("env QS_ICON_THEME=candy-icons quickshell -c dap")  -- bar, launcher, calendar, control center, OSD (fallback: waybar)
+  hl.exec_cmd("env QS_ICON_THEME=candy-icons quickshell -c dap")  -- side bar, island (tabs, search, control center), OSD (fallback: waybar)
   -- swaync retired: the quickshell island is the notification server now
   hl.exec_cmd("hypridle")
   hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")

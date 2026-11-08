@@ -55,4 +55,24 @@ Singleton {
             Hyprland.dispatch("hl.dsp.focus({ window = \"address:0x" + t.address + "\" })")
         } else if (it.entry) it.entry.execute()
     }
+
+    // App search used by the Hangar grid and the Super+Space search: name prefix first, then words,
+    // then anywhere in the name, generic name, comment or keywords.
+    function search(query) {
+        const q = (query || "").trim().toLowerCase()
+        const all = DesktopEntries.applications.values.filter(e => !e.noDisplay)
+        if (q === "") return all.sort((a, b) => a.name.localeCompare(b.name))
+        const scored = []
+        for (const e of all) {
+            const n = e.name.toLowerCase()
+            let sc = -1
+            if (n.startsWith(q)) sc = 100
+            else if (n.includes(" " + q)) sc = 80
+            else if (n.includes(q)) sc = 60
+            else if ((e.genericName || "").toLowerCase().includes(q) || (e.comment || "").toLowerCase().includes(q)) sc = 30
+            else if ((e.keywords || []).join(" ").toLowerCase().includes(q)) sc = 20
+            if (sc >= 0) scored.push({ e: e, s: sc })
+        }
+        return scored.sort((a, b) => b.s - a.s || a.e.name.localeCompare(b.e.name)).map(x => x.e)
+    }
 }

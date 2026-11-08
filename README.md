@@ -35,6 +35,7 @@ Pilot callsigns, GN green, anime blue and Trans-Am red, caution tape. No rainbow
 | `kde/DapGN.colors` | `~/.local/share/color-schemes/DapGN.colors` |
 | `qt6ct/` | `~/.config/qt6ct/` |
 | `icons/GN-Sonar/` | `~/.local/share/icons/GN-Sonar/` (sonar arrow, GN Drive busy, lock-on pointer; others inherit Bibata-Modern-Ice. Rebuild with `cursor/build-gn-sonar.py`) |
+| `hyprfm/` | `~/.config/hyprfm/` (Celestial Being theme for the HyprFM file manager, AUR `hyprfm-git`, optional) |
 | `spotify-player/` | `~/.config/spotify-player/` (Celestial Being theme for the `spotify_player` terminal client, optional) |
 
 ## Install
@@ -79,7 +80,8 @@ Each command decodes out of noise before it runs. `sudo`/`doas`/`run0` get a cau
 - **Hangar** (`NotchHangar.qml`): every app, with search. The island opens extra wide on this tab. Type to filter, Enter launches the highlighted app, arrows move.
 - **Launch Bay** (`PowerSheet.qml`, a sheet): Lock runs at once; Logout, Restart and Shutdown need a second, explicit confirm under caution tape. `qs -c dap ipc call shell power` opens it.
 - **Cursors (GN-Sonar):** the arrow is a GN green dot and ring that sends a sonar ping every 1.2 s; busy and loading spin a GN Drive arc; links and buttons show a lock-on reticle. Text, resize and move cursors come from Bibata.
-- **Colors:** window borders and the open island are anime blue, or red in Trans-Am (performance profile). The closed island is a still GN green ring. NT-D (Do Not Disturb) turns the ring psycho-frame red. The Wi-Fi and Bluetooth pages sweep a Zaku mono-eye while they load. On battery, a critical "GN particles low" alarm fires at 15% and 5%.
+- **Wallpaper profiles:** `hypr/wallpaper-profiles` lists `name file dark|light` per line. The Bridge's Dark tile toggles dark/light; its arrow cycles profiles (`theme.sh next`).
+- **Colors:** the side bar and the closed island share a still GN green ring; window borders and the open island are anime blue, or red in Trans-Am (performance profile). NT-D (Do Not Disturb) turns the ring psycho-frame red. The Wi-Fi and Bluetooth pages sweep a Zaku mono-eye while they load. On battery, a critical "GN particles low" alarm fires at 15% and 5%.
 - **GN Sense** (optional, [gn-sense](https://github.com/parikesitad-pm/gn-sense)): power profile and keyboard RGB for Acer Nitro and Predator laptops, shown as an island sheet. The island loads gn-sense's `SenseCard.qml` when gn-sense is installed; the keyboard's N key (keycode 433), the Bridge tile and `qs -c dap ipc call shell sense` open it. Without gn-sense the tile is disabled.
 - **Notifications:** the shell is the notification server (`NotificationServer` in `Ui.qml`); swaync is not started. `Super+N` opens the Comms tab. Action buttons are passed back to the sending app.
 - **Calendar and alarms** (`Agenda.qml`, `Ics.js`): alarms are saved in `~/.local/state/dap-shell-alarms.json`. To show Google Calendar events, paste the calendar's "Secret address in iCal format" into `~/.config/dap-shell/gcal-ics-url` (mode 600). That address gives read access to the calendar, so keep it out of the repo.
@@ -88,9 +90,10 @@ Each command decodes out of noise before it runs. `sudo`/`doas`/`run0` get a cau
 
 Four desktops always exist: Exia, Dynames, Kyrios and Virtue. **New desktop** in the Overview adds Freedom, Zaku, Unicorn, 00 Raiser, RX-78-2, Strike, Wing and Barbatos, in that order; an empty added desktop shows a close button on hover. Added desktops are gone after a restart. Control Center > Arrange displays places the external monitor left or right of the laptop. The side is saved to `~/.local/state/dap-display-side`. Set your own monitors in the `hl.monitor(...)` lines of `hyprland.lua`.
 
-## App menu and Quick Look
+## Search, apps and Quick Look
 
-- **App menu:** `Launcher.qml`, a searchable grid. It opens from the side bar's emblem or `Super+Space`.
+- **Search:** `Super+Space` opens the island as one search line; results appear below as you type. Enter launches, Up/Down move, Esc closes (`SearchSheet.qml`).
+- **Hangar:** the side bar's emblem opens the wide app grid in the island.
 - **Screenshots:** ⌘⇧3 screen, ⌘⇧4 selection, ⌘⇧W window, ⌘⇧5 toolbar, ⌘⇧6 record. The selection picker (`RegionSelect.qml`) dims the rest of the screen, runs guide lines from the selection's edges, and has corner handles: drag to select, drag inside to move, drag a corner to resize, Enter or double-click to capture, Esc to cancel. GN green for screenshots, Trans-Am red for recording. Files go to `~/Pictures/Screenshots` and the clipboard.
 - **Quick Look:** `Alt+Space` in Dolphin runs `hypr/scripts/preview.sh`. Images and text open in `Preview.qml`; other file types open in their default app. Other apps still receive the key.
 

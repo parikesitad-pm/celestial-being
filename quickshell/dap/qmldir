@@ -15,7 +15,6 @@ NotchCalendar NotchCalendar.qml
 NotchFocus NotchFocus.qml
 NotchTodo NotchTodo.qml
 CavaBars CavaBars.qml
-Launcher Launcher.qml
 VolumeOsd VolumeOsd.qml
 PageHeader PageHeader.qml
 PickRow PickRow.qml
@@ -45,3 +44,4 @@ NotchSystem NotchSystem.qml
 NotchHangar NotchHangar.qml
 PowerSheet PowerSheet.qml
 RegionSelect RegionSelect.qml
+SearchSheet SearchSheet.qml

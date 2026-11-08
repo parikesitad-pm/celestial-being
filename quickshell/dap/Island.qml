@@ -15,7 +15,9 @@ PanelWindow {
     // The bar moved to the left edge; the island now keeps the top strip clear of windows.
     exclusiveZone: 40
     WlrLayershell.namespace: "dap-island"
-    WlrLayershell.keyboardFocus: Ui.island ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    // Exclusive while open: on-demand focus only arrives after a click or hover, so Super+Space
+    // search could not be typed into straight away. Click-outside still closes it (focus grab below).
+    WlrLayershell.keyboardFocus: Ui.island ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     // Only the island takes input; the rest of this window lets clicks through to what's below.
     mask: Region { item: shape }
 
@@ -42,7 +44,7 @@ PanelWindow {
     onModeChanged: {
         if (mode !== "open") { Ui.sheet = ""; return }
         if (Ui.sheet !== "") {
-            header.play("CELESTIAL BEING // " + ({ launch: "LAUNCH BAY", bridge: "BRIDGE", sense: "GN SENSE" })[Ui.sheet], true)
+            if (Ui.sheet !== "search") header.play("CELESTIAL BEING // " + ({ launch: "LAUNCH BAY", bridge: "BRIDGE", sense: "GN SENSE" })[Ui.sheet], true)
             return
         }
         if (tab === 0 && !Ui.player) Ui.islandTab = 1
@@ -56,7 +58,8 @@ PanelWindow {
 
     // Sheets size to their content (Bridge up to the screen height); Hangar is taller.
     readonly property real sheetChrome: 32 + header.implicitHeight + 10 + 4
-    readonly property real openHeight: Ui.sheet === "launch" ? sheetChrome + powerSheet.implicitHeight
+    readonly property real openHeight: Ui.sheet === "search" ? 32 + searchSheet.implicitHeight
+        : Ui.sheet === "launch" ? sheetChrome + powerSheet.implicitHeight
         : Ui.sheet === "bridge" ? Math.min(sheetChrome + control.implicitHeight, (screen ? screen.height : 1080) - 60)
         : Ui.sheet === "sense" && senseCard.item ? Math.min(sheetChrome + senseCard.item.implicitHeight, (screen ? screen.height : 1080) - 60)
         : tab === 6 ? 470 : 388
@@ -160,6 +163,7 @@ PanelWindow {
                 spacing: 10
 
                 IslandHeader {
+                    visible: Ui.sheet !== "search"
                     id: header
                     Layout.fillWidth: true
                     running: win.mode === "open"
@@ -231,6 +235,12 @@ PanelWindow {
                         property: "active"
                         value: win.mode === "open" && Ui.sheet === "sense"
                     }
+                }
+                SearchSheet {
+                    id: searchSheet
+                    Layout.fillWidth: true
+                    visible: Ui.sheet === "search"
+                    shown: win.mode === "open" && Ui.sheet === "search"
                 }
                 PowerSheet {
                     id: powerSheet

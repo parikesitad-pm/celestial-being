@@ -1,0 +1,4 @@
+# Wallpaper profiles: name, file in ~/Pictures/wallpapers, GTK/Qt mode (dark or light).
+# Add a line to add a profile; the Bridge's Dark tile arrow cycles through them in this order.
+dark   gundam-dark.jpg   dark
+light  gundam-light.jpg  light

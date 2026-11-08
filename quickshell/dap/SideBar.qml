@@ -7,7 +7,7 @@ import Quickshell.Services.Pipewire
 import Quickshell.Services.SystemTray
 import Quickshell.Bluetooth
 
-// Vertical bar on the left edge, top to bottom: emblem (launcher), desktops, apps (the dock),
+// Vertical bar on the left edge, top to bottom: emblem (opens Hangar), desktops, apps (the dock),
 // desktop name, tray, status, power. Status (gear) opens the Bridge sheet, power the Launch Bay.
 PanelWindow {
     id: bar
@@ -55,8 +55,14 @@ PanelWindow {
         anchors.fill: parent
         radius: 24
         color: Theme.glass
-        border.width: 1
-        border.color: Theme.stroke
+
+        // Same still GN green ring as the closed island, so bar and notch read as one frame.
+        GlowRing {
+            anchors.fill: parent
+            radius: parent.radius
+            spinning: false
+            colors: [Theme.gn, Qt.darker(Theme.gn, 2.6), Theme.gn, Qt.darker(Theme.gn, 2.6)]
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -70,7 +76,7 @@ PanelWindow {
                 source: "file://" + Theme.assets + "cb-64.png"
                 sourceSize: Qt.size(64, 64)
                 smooth: true; mipmap: true
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Ui.toggle("launcher") }
+                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Ui.openIsland(6) }   // Hangar
             }
 
             // This screen's desktops; the active one stretches.

@@ -32,8 +32,11 @@ Flow {
     }
     Tile {
         width: mainPage.span(6)
-        glyph: Theme.g(Theme.dark ? 0xF0594 : 0xF0599); title: Theme.dark ? "Dark" : "Light"; sub: "Appearance"
-        onClicked: { Theme.dark = !Theme.dark; Ui.sh(Theme.scripts + "theme.sh " + (Theme.dark ? "dark" : "light")) }
+        glyph: Theme.g(Theme.dark ? 0xF0594 : 0xF0599); title: Theme.dark ? "Dark" : "Light"
+        // Subtitle: the wallpaper profile; the arrow cycles profiles (~/.config/hypr/wallpaper-profiles).
+        sub: "Wallpaper · " + Ui.wallProfile
+        onClicked: Ui.sh(Theme.scripts + "theme.sh toggle")
+        chevron: true; onChevronClicked: Ui.sh(Theme.scripts + "theme.sh next")
     }
     Tile {
         width: mainPage.span(6)

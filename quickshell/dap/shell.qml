@@ -6,7 +6,6 @@ ShellRoot {
     Variants { model: Ui.barScreens; SideBar {} }
     Calendar {}
     Island {}
-    Launcher {}
     VolumeOsd {}
     Variants { model: Quickshell.screens; Overview {} }
     Screenshot {}
@@ -15,7 +14,8 @@ ShellRoot {
 
     IpcHandler {
         target: "shell"
-        function launcher(): void { Ui.toggle("launcher") }
+        function launcher(): void { Ui.openSheet("search") }   // old name, kept for binds
+        function search(): void { Ui.openSheet("search") }
         function calendar(): void { Ui.toggle("calendar") }
         function notifs(): void {
             Ui.islandTab = 4

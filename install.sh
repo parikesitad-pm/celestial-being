@@ -51,6 +51,7 @@ LINKS=(
   "waybar:$HOME/.config/waybar"
   "qt6ct:$HOME/.config/qt6ct"
   "spotify-player:$HOME/.config/spotify-player"
+  "hyprfm:$HOME/.config/hyprfm"
   "icons/GN-Sonar:$HOME/.local/share/icons/GN-Sonar"
   "starship/starship.toml:$HOME/.config/starship.toml"
   "starship/full.toml:$HOME/.config/starship/full.toml"

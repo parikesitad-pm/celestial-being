@@ -173,7 +173,6 @@ Singleton {
         }
     }
 
-    property bool launcher: false
     property bool calendar: false
     property bool cc: false
     property bool overview: false
@@ -235,10 +234,10 @@ Singleton {
     property var now: new Date()
     SystemClock { id: clk; precision: SystemClock.Seconds; onDateChanged: s.now = clk.date }
 
-    function closeAll() { sheet = ""; select = ""; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
+    function closeAll() { sheet = ""; select = ""; island = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
     // Island tabs (see Island.tabs): 0 Haro, 1 Mission, 2 Sortie, 3 Orders, 4 Comms, 5 Veda, 6 Hangar.
     // Sheets shown in the island instead of the tabs: "bridge" (control center), "launch" (session),
-    // "sense" (gn-sense).
+    // "sense" (gn-sense), "search" (Super+Space app search).
     property string sheet: ""
     // Region picker (RegionSelect.qml): "shot" or "record" while it is open.
     property string select: ""
@@ -296,9 +295,21 @@ Singleton {
             }
         }
     }
-    Process {
-        command: ["cat", Quickshell.env("HOME") + "/.local/state/dap-theme"]
-        running: true
-        stdout: StdioCollector { onStreamFinished: Theme.dark = text.trim() !== "light" }
+    // Theme mode and wallpaper profile, written by theme.sh; followed live so the Bridge tile and
+    // the shell colors update after `theme.sh next` from anywhere.
+    property string wallProfile: "dark"
+    FileView {
+        path: Quickshell.env("HOME") + "/.local/state/dap-theme"
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: Theme.dark = text().trim() !== "light"
     }
+    FileView {
+        path: Quickshell.env("HOME") + "/.local/state/dap-wallpaper-profile"
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: s.wallProfile = text().trim() || "dark"
+    }
+    // Apply the saved profile at login (hyprpaper itself starts with a fixed file).
+    Process { running: true; command: [Theme.scripts + "theme.sh", "apply"] }
 }
