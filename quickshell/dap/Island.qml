@@ -15,13 +15,15 @@ PanelWindow {
     // The bar moved to the left edge; the island now keeps the top strip clear of windows.
     exclusiveZone: 40
     WlrLayershell.namespace: "dap-island"
-    // Exclusive while open: on-demand focus only arrives after a click or hover, so Super+Space
-    // search could not be typed into straight away. Click-outside still closes it (focus grab below).
-    WlrLayershell.keyboardFocus: Ui.island ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    // Search takes the keyboard at once (on-demand focus only arrives after a click or hover).
+    // Exclusive focus clears a focus grab immediately, which would close the island, so search
+    // runs without the grab and closes with Esc or a launch instead of a click outside.
+    WlrLayershell.keyboardFocus: !Ui.island ? WlrKeyboardFocus.None
+        : Ui.sheet === "search" ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.OnDemand
     // Only the island takes input; the rest of this window lets clicks through to what's below.
     mask: Region { item: shape }
 
-    HyprlandFocusGrab { windows: [win]; active: Ui.island; onCleared: Ui.cleared("island") }
+    HyprlandFocusGrab { windows: [win]; active: Ui.island && Ui.sheet !== "search"; onCleared: Ui.cleared("island") }
 
     readonly property string mode: Ui.island ? "open" : (Ui.toast ? "toast" : "pill")
     readonly property bool narrow: !!screen && screen.width < 1300
