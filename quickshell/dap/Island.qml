@@ -41,7 +41,10 @@ PanelWindow {
     }
     onModeChanged: {
         if (mode !== "open") { Ui.sheet = ""; return }
-        if (Ui.sheet !== "") { header.play("CELESTIAL BEING // " + (Ui.sheet === "launch" ? "LAUNCH BAY" : "BRIDGE"), true); return }
+        if (Ui.sheet !== "") {
+            header.play("CELESTIAL BEING // " + ({ launch: "LAUNCH BAY", bridge: "BRIDGE", sense: "GN SENSE" })[Ui.sheet], true)
+            return
+        }
         if (tab === 0 && !Ui.player) Ui.islandTab = 1
         header.play("CELESTIAL BEING // PILOT dap_", true)
     }
@@ -55,6 +58,7 @@ PanelWindow {
     readonly property real sheetChrome: 32 + header.implicitHeight + 10 + 4
     readonly property real openHeight: Ui.sheet === "launch" ? sheetChrome + powerSheet.implicitHeight
         : Ui.sheet === "bridge" ? Math.min(sheetChrome + control.implicitHeight, (screen ? screen.height : 1080) - 60)
+        : Ui.sheet === "sense" && senseCard.item ? Math.min(sheetChrome + senseCard.item.implicitHeight, (screen ? screen.height : 1080) - 60)
         : tab === 6 ? 470 : 388
 
     // Body hanging from the top edge, with concave fillets into it. Drawn under the content.
@@ -213,6 +217,21 @@ PanelWindow {
                     Item { Layout.fillWidth: true }
                 }
 
+                // GN Sense (power profile + keyboard RGB) from the gn-sense config, when it is installed.
+                // Loaded once at startup, so it also restores the saved keyboard lighting at login.
+                Loader {
+                    id: senseCard
+                    Layout.fillWidth: true
+                    visible: Ui.sheet === "sense" && status === Loader.Ready
+                    source: Ui.senseCard
+                    onLoaded: item.embedded = true
+                    Binding {
+                        target: senseCard.item
+                        when: senseCard.status === Loader.Ready
+                        property: "active"
+                        value: win.mode === "open" && Ui.sheet === "sense"
+                    }
+                }
                 PowerSheet {
                     id: powerSheet
                     Layout.fillWidth: true

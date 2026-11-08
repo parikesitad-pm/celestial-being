@@ -237,8 +237,17 @@ Singleton {
 
     function closeAll() { sheet = ""; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
     // Island tabs (see Island.tabs): 0 Haro, 1 Mission, 2 Sortie, 3 Orders, 4 Comms, 5 Veda, 6 Hangar.
-    // Sheets shown in the island instead of the tabs: "bridge" (control center), "launch" (session).
+    // Sheets shown in the island instead of the tabs: "bridge" (control center), "launch" (session),
+    // "sense" (gn-sense).
     property string sheet: ""
+    // gn-sense's card, embedded as the "sense" sheet; empty when gn-sense is not installed.
+    readonly property string senseCardPath: Quickshell.env("HOME") + "/.config/quickshell/gn-sense/SenseCard.qml"
+    property string senseCard: ""
+    Process {
+        running: true
+        command: ["test", "-f", s.senseCardPath]
+        onExited: code => { if (code === 0) s.senseCard = "file://" + s.senseCardPath }
+    }
     function openSheet(name) {
         const was = island && sheet === name
         closeAll()

@@ -25,6 +25,7 @@ ShellRoot {
         function tab(i: int): void { Ui.openIsland(i) }
         function power(): void { Ui.openSheet("launch") }
         function bridge(): void { Ui.openSheet("bridge") }
+        function sense(): void { Ui.openSheet("sense") }
         function cc(): void { Ui.toggle("cc") }
         function screenshot(): void { Ui.toggle("shot") }
         function overview(): void { Ui.toggle("overview") }

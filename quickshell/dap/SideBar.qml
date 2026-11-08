@@ -200,7 +200,7 @@ PanelWindow {
                 spacing: 8
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Theme.g(0xF0493)
+                    text: Theme.g(0xF303)   // Arch Linux logo
                     font.family: Theme.iconFont; font.pixelSize: 17
                     color: Ui.sheet === "bridge" ? Theme.accent : Theme.text
                     rotation: Ui.sheet === "bridge" ? 90 : 0

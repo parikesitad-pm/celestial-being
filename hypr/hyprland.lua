@@ -38,7 +38,6 @@ hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.on("hyprland.start", function()
   hl.exec_cmd("hyprpaper")
   hl.exec_cmd("env QS_ICON_THEME=candy-icons quickshell -c dap")  -- bar, launcher, calendar, control center, OSD (fallback: waybar)
-  hl.exec_cmd("qs -c gn-sense -n -d")  -- power profile + keyboard RGB panel; restores the saved lighting
   -- swaync retired: the quickshell island is the notification server now
   hl.exec_cmd("hypridle")
   hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
@@ -201,7 +200,7 @@ hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDI
 hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true })
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { locked = true, repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { locked = true, repeating = true })
-hl.bind("code:433", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.local/bin/gn-sense"))  -- N (NitroSense) key: gn-sense panel
+hl.bind("code:433", hl.dsp.exec_cmd("qs -c dap ipc call shell sense"))  -- N (NitroSense) key: GN Sense sheet in the island
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"),       { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"),   { locked = true })

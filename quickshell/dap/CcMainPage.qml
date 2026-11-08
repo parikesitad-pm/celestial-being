@@ -148,6 +148,7 @@ Flow {
     Tile {
         width: mainPage.span(12)
         glyph: Theme.g(0xF030C); title: "GN Sense"; sub: "Power profile · keyboard RGB"
-        onClicked: { Ui.island = false; Ui.sh(Quickshell.env("HOME") + "/.local/bin/gn-sense") }
+        interactive: Ui.senseCard !== ""
+        onClicked: Ui.openSheet("sense")
     }
 }
