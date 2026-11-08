@@ -14,7 +14,8 @@ Singleton {
     readonly property color tile:        dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.06)
     readonly property color tileHover:   dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.12)
     readonly property color gn: "#2ee6a8"           // GN green
-    readonly property color transAmRed: "#ff2e63"   // Trans-Am (performance profile)
+    readonly property color transAmRed: "#ff2e63"
+    readonly property color anime: "#4fb6ff"        // Cruise / Standby window edges   // Trans-Am (performance profile)
     readonly property color monoEye: "#ff4d9d"      // Zaku mono-eye (loading)
     readonly property color psycho: "#ff1f3d"       // Unicorn psycho-frame (NT-D = Do Not Disturb)
     // 0 = GN green, 1 = Trans-Am red; eased so the whole shell flushes red instead of snapping.
@@ -29,11 +30,10 @@ Singleton {
     readonly property color orange: "#ff9f1c"
     readonly property color red:    "#ff4d6d"
     readonly property color onTint: "#04120d"   // text on any filled accent tile
-    // The focused desktop's suit color, or red / green / yellow in Trans-Am. Same stops and speed
+    // Anime blue, or red in Trans-Am. Same stops and speed
     // as what Ui.applyBorder sends to Hyprland.
     readonly property color desk: Ui.deskColor(Ui.activeDesk)
-    readonly property var border: Ui.transAm ? [transAmRed, gn, gold, transAmRed]
-                                             : [desk, Qt.darker(desk, 2.2), desk, Qt.darker(desk, 2.2)]
+    readonly property var border: [desk, Qt.darker(desk, 2.2), desk, Qt.darker(desk, 2.2)]
     readonly property int borderLoopMs: 4000
 
     readonly property string font:     "JetBrainsMono Nerd Font"

@@ -30,8 +30,6 @@ Singleton {
     }
     // ───────── island ─────────
     property bool island: false
-    property real islandPillWidth: 0   // reported by the island so the bar keeps its left label clear
-    property real ccPillWidth: 0       // same, reported by the control center pill
 
     // ───────── notifications: this shell is the notification server (swaync is retired) ─────────
     property bool dnd: false   // hides toasts; notifications still land in the Notif tab
@@ -96,10 +94,8 @@ Singleton {
     function addDesk(id, focus) { sh("hyprctl eval 'dap_add_desktop(" + id + ", " + focus + ")'") }
     function removeDesk(id) { sh("hyprctl eval 'dap_remove_desktop(" + id + ")'") }
 
-    // Suit color per desktop (same order as deskNames). Exia..Virtue reuse the shell's four border colors.
-    readonly property var deskColors: ["#3b82f6", "#2ee6a8", "#ff9f1c", "#a855f7", "#4fc3ff", "#ff4d9d",
-                                       "#ff3b3b", "#00e5ff", "#ffd23f", "#ff7a3d", "#c7d2fe", "#94a3b8"]
-    function deskColor(id) { return transAm ? Theme.accent : (deskColors[id - 1] || Theme.gn) }
+    // One calm edge color: anime blue normally, red in Trans-Am. Desktops share it.
+    function deskColor(id) { return transAm ? Theme.transAmRed : Theme.anime }
 
     // Power profile lives here so the whole shell can react to it; "performance" is Trans-Am.
     property string profile: "balanced"
@@ -121,8 +117,8 @@ Singleton {
     readonly property int activeDesk: Hyprland.focusedMonitor && Hyprland.focusedMonitor.activeWorkspace
         ? Hyprland.focusedMonitor.activeWorkspace.id : 1
     function applyBorder() {
-        const c = deskColors[activeDesk - 1] || Theme.gn
-        const stops = transAm ? ["#ff2e63", "#2ee6a8", "#f2b705"] : [c, Qt.darker(c, 2.4).toString()]
+        const c = String(transAm ? Theme.transAmRed : Theme.anime)
+        const stops = [c, Qt.darker(c, 2.4).toString()]
         const cols = stops.map(x => '"rgba(' + String(x).slice(1) + 'ff)"').join(", ")
         sh("hyprctl eval 'hl.config({ general = { col = { active_border = { colors = {" + cols + "}, angle = 45 } } } }); "
            + "hl.animation({ leaf = \"borderangle\", enabled = true, speed = 40"
@@ -239,8 +235,26 @@ Singleton {
     property var now: new Date()
     SystemClock { id: clk; precision: SystemClock.Seconds; onDateChanged: s.now = clk.date }
 
-    function closeAll() { island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
+    function closeAll() { power = false; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
+    // The island hosts the control center and the other panels as tabs (see Island.tabs).
+    readonly property int controlTab: 5
+    // Session sheet (lock, logout, restart, shutdown) shown in the island instead of the tabs.
+    property bool power: false
+    function openPower() {
+        const was = island && power
+        closeAll()
+        if (was) return
+        power = true
+        island = true
+    }
+    function openIsland(tab) {
+        if (island && islandTab === tab) { island = false; return }
+        closeAll()
+        islandTab = tab
+        island = true
+    }
     function toggle(name) {
+        if (name === "cc") { openIsland(controlTab); return }
         if (clearedName === name && Date.now() - clearedAt < 250) return   // click-outside just closed it
         const was = s[name]
         closeAll()

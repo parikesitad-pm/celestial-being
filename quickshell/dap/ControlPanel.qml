@@ -2,36 +2,28 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
 
-// The right end of the bar: a status pill that springs open into the control center,
-// with a sonar ping and a glitching systems check every time it opens.
-PanelWindow {
+// Control center, hosted in the island's Control tab: toggles, sliders, power profiles, displays,
+// session, and the Wi-Fi / audio / display / Bluetooth pages.
+Item {
     id: win
-    anchors { top: true; right: true }
-    margins { top: 6; right: 10 }
-    implicitWidth: 380
-    implicitHeight: openHeight + 12
-    color: "transparent"
-    exclusiveZone: -1
-    WlrLayershell.namespace: "dap-cc"
-    WlrLayershell.keyboardFocus: Ui.cc ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    // Only the pill / panel takes input; the rest of this window lets clicks through.
-    mask: Region { item: shape }
-
-    HyprlandFocusGrab { windows: [win]; active: Ui.cc; onCleared: Ui.cleared("cc") }
-
+    property bool shown: false
+    implicitHeight: col.implicitHeight
+    focus: shown
+    Keys.onEscapePressed: event => {
+        if (page !== "main") { goMain(); event.accepted = true }
+        else event.accepted = false
+    }
+    Keys.onLeftPressed: if (page === "display") setSide("left")
+    Keys.onRightPressed: if (page === "display") setSide("right")
 
     PwObjectTracker { objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource] }
     readonly property var sink: Pipewire.defaultAudioSink
     readonly property var mic: Pipewire.defaultAudioSource
     readonly property var player: Mpris.players.values.find(p => p.isPlaying) ?? Mpris.players.values[0] ?? null
-    readonly property real openHeight: col.implicitHeight + 32
-    readonly property var pageTitles: ({ main: "ALL SYSTEMS NOMINAL", wifi: "WI-FI LINK", audio: "AUDIO ROUTING",
-                                         display: "DISPLAY ARRAY", bluetooth: "BLUETOOTH LINK" })
     property bool wifiOn: true
     property string dispMode: "none"      // extend | mirror | pc | none
     property bool dispPortrait: false
@@ -42,7 +34,6 @@ PanelWindow {
     property real brightness: 50
     function setBrightnessLater() { briDebounce.restart() }
     property string page: "main"          // main | wifi | audio | display | bluetooth
-    onPageChanged: if (Ui.cc) { systems.target = "GN DRIVE // " + pageTitles[page]; systems.play() }
     property var nets: []
     property var sinks: []
     property var sources: []
@@ -54,7 +45,7 @@ PanelWindow {
     property bool wifiBusy: false
     readonly property bool scanning: pScan.running
     readonly property string connectingTo: pConn.ssid
-    function refocus() { card.forceActiveFocus() }
+    function refocus() { win.forceActiveFocus() }
     function scanWifi() { pSaved.running = true; pScan.running = true }
     function connectWifi(ssid, pw) {
         wifiBusy = true; wifiMsg = ""
@@ -74,7 +65,7 @@ PanelWindow {
         onExited: code => {
             win.wifiBusy = false
             pw = ""
-            if (code === 0) { win.wifiMsg = ""; win.pwdFor = ""; win.scanWifi(); Ui.cc = false }
+            if (code === 0) { win.wifiMsg = ""; win.pwdFor = ""; win.scanWifi(); Ui.island = false }
             else win.wifiMsg = (connErr.text + connOut.text).trim().split("\n").pop() || "Could not connect"
         } }
     function refreshAudio() { pSinks.running = true; pSources.running = true; pDefSink.running = true; pDefSource.running = true }
@@ -84,7 +75,7 @@ PanelWindow {
         else if (n === "audio") refreshAudio()
         else if (n === "display") Hyprland.refreshMonitors()
     }
-    function goMain() { page = "main"; pwdFor = ""; wifiMsg = ""; card.forceActiveFocus() }
+    function goMain() { page = "main"; pwdFor = ""; wifiMsg = ""; win.forceActiveFocus() }
     Process { id: pScan; command: ["nmcli", "-t", "-f", "IN-USE,SSID,SIGNAL,SECURITY", "dev", "wifi", "list", "--rescan", "auto"]
         stdout: StdioCollector { onStreamFinished: {
             const seen = {}, out = []
@@ -105,18 +96,11 @@ PanelWindow {
     Process { id: pDefSource; command: ["pactl", "get-default-source"]; stdout: StdioCollector { onStreamFinished: win.defSource = text.trim() } }
     Timer { id: afterSet; interval: 400; onTriggered: win.refreshAudio() }
 
-    // ── refresh live state, and play the opening, whenever the panel opens ──
-    Connections {
-        target: Ui
-        function onCcChanged() {
-            win.armed = ""
-            if (!Ui.cc) { win.goMain(); return }
-            rWifi.running = true; rProf.running = true; rBri.running = true; rDisp.running = true
-            systems.target = "GN DRIVE // " + win.pageTitles[win.page]
-            systems.play()
-            sonar.play()
-            card.forceActiveFocus()
-        }
+    // Refresh live state whenever the Control tab is shown.
+    onShownChanged: {
+        armed = ""
+        if (!shown) { goMain(); return }
+        rWifi.running = true; rProf.running = true; rBri.running = true; rDisp.running = true
     }
     Process { id: rDisp; command: [Theme.scripts + "display.sh", "status"]
         stdout: StdioCollector { onStreamFinished: { const p = text.trim().split(" "); win.dispMode = p[0] || "none"; win.dispPortrait = p[1] === "1"; win.dispSide = p[2] || "right" } } }
@@ -133,7 +117,7 @@ PanelWindow {
     FileView { id: briMax; path: "/sys/class/backlight/intel_backlight/max_brightness"; blockLoading: true }
     Timer {
         interval: 250; repeat: true
-        running: Ui.cc && !briDebounce.running
+        running: win.shown && !briDebounce.running
         onTriggered: {
             briNow.reload()
             const now = parseInt(briNow.text()), max = parseInt(briMax.text())
@@ -141,98 +125,26 @@ PanelWindow {
         }
     }
 
-    Binding { target: Ui; property: "ccPillWidth"; value: pill.implicitWidth + 28 }
 
-    // ── one shape: status pill when closed, control center when open ──
-    Rectangle {
-        id: shape
-        anchors.right: parent.right
-        width: Ui.cc ? 372 : pill.implicitWidth + 28
-        height: Ui.cc ? win.openHeight : 36
-        radius: Ui.cc ? 28 : 18
-        // Same under-damped spring as the island.
-        Behavior on width { SpringAnimation { spring: 4; damping: 0.3; epsilon: 0.25 } }
-        Behavior on height { SpringAnimation { spring: 4; damping: 0.3; epsilon: 0.25 } }
-        Behavior on radius { SpringAnimation { spring: 4; damping: 0.3; epsilon: 0.25 } }
-        color: Ui.cc || pillArea.containsMouse ? Theme.glassStrong : Theme.glass
-        Behavior on color { ColorAnimation { duration: 150 } }
-        border.width: 1; border.color: Theme.stroke
-        clip: true
-
-        MouseArea {
-            id: pillArea
-            anchors.fill: parent
-            enabled: !Ui.cc
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: Ui.toggle("cc")
+    ColumnLayout {
+        id: col
+        anchors.left: parent.left; anchors.right: parent.right
+        spacing: 8
+        CcMainPage { cc: win; visible: win.page === "main"; Layout.fillWidth: true }
+        CcWifiPage { cc: win; visible: win.page === "wifi"; Layout.fillWidth: true }
+        CcAudioPage { cc: win; visible: win.page === "audio"; Layout.fillWidth: true }
+        DisplayPage {
+            visible: win.page === "display"
+            Layout.fillWidth: true
+            side: win.dispSide
+            portrait: win.dispPortrait
+            onBack: win.goMain()
+            onSidePicked: s => win.setSide(s)
         }
-
-        CcPill {
-            id: pill
-            anchors.right: parent.right; anchors.rightMargin: 14
-            y: (36 - height) / 2
-            sink: win.sink
-            // Hidden at once when the panel grows; on close it waits for the shape to shrink first,
-            // so it never overlaps the content mid-spring.
-            visible: !Ui.cc
-            opacity: visible ? 1 : 0
-            Behavior on opacity {
-                SequentialAnimation { PauseAnimation { duration: 180 } NumberAnimation { duration: 220 } }
-            }
-        }
-
-        // Pings out from where the pill was.
-        Sonar { id: sonar; x: shape.width - 40; y: 18; color: Theme.accent }
-
-        // Fixed width, pinned to the top-right: the growing shape uncovers it like a curtain, and the
-        // tiles never re-wrap mid-spring (which would resize the window and drop the focus grab).
-        Item {
-            id: card
-            anchors.top: parent.top; anchors.right: parent.right
-            anchors.margins: 16
-            width: 340
-            height: col.implicitHeight
-            enabled: Ui.cc
-            opacity: Ui.cc ? 1 : 0
-            transform: Translate { y: Ui.cc ? 0 : -10; Behavior on y { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } } }
-            Behavior on opacity { NumberAnimation { duration: Ui.cc ? 260 : 90; easing.type: Easing.OutCubic } }
-            focus: true
-            Keys.onEscapePressed: {
-                if (win.page === "main") Ui.cc = false
-                else win.goMain()
-            }
-            Keys.onLeftPressed: if (win.page === "display") win.setSide("left")
-            Keys.onRightPressed: if (win.page === "display") win.setSide("right")
-
-            ColumnLayout {
-                id: col
-                anchors.left: parent.left; anchors.right: parent.right
-                spacing: 8
-
-                GlitchText {
-                    id: systems
-                    target: "GN DRIVE // ALL SYSTEMS NOMINAL"
-                    font.family: Theme.font; font.pixelSize: 11; font.weight: Font.Bold; font.letterSpacing: 1
-                    color: Theme.accent
-                }
-
-                // 12-column grid inside: 21 px cells + 8 px gaps fill the 340 px inner width.
-                CcMainPage { cc: win; visible: win.page === "main"; Layout.fillWidth: true }
-                CcWifiPage { cc: win; visible: win.page === "wifi"; Layout.fillWidth: true }
-                CcAudioPage { cc: win; visible: win.page === "audio"; Layout.fillWidth: true }
-                DisplayPage {
-                    visible: win.page === "display"
-                    side: win.dispSide
-                    portrait: win.dispPortrait
-                    onBack: win.goMain()
-                    onSidePicked: s => win.setSide(s)
-                }
-                BluetoothPage {
-                    visible: win.page === "bluetooth"
-                    onBack: win.goMain()
-                }
-            }
+        BluetoothPage {
+            visible: win.page === "bluetooth"
+            Layout.fillWidth: true
+            onBack: win.goMain()
         }
     }
 }

@@ -101,6 +101,6 @@ ColumnLayout {
 
     PickRow {
         title: "Advanced settings…"
-        onPicked: { Ui.cc = false; Ui.sh("blueman-manager") }
+        onPicked: { Ui.island = false; Ui.sh("blueman-manager") }
     }
 }

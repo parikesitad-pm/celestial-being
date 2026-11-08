@@ -66,5 +66,5 @@ ColumnLayout {
         }
     }
     PickRow { title: "Rescan"; sub: page.cc.scanning ? "Scanning…" : ""; onPicked: page.cc.scanWifi() }
-    PickRow { title: "Advanced settings…"; onPicked: { Ui.cc = false; Ui.sh("nm-connection-editor") } }
+    PickRow { title: "Advanced settings…"; onPicked: { Ui.island = false; Ui.sh("nm-connection-editor") } }
 }

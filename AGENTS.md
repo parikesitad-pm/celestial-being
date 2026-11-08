@@ -17,7 +17,7 @@ are merged back there by hand, so keep commits small and focused.
 
 ## Stack
 - Hyprland 0.57 with Lua config.
-- Quickshell (QML): bar, island, control center, dock, launcher, Overview, notification server (`quickshell/dap/`), lock screen (`quickshell/dap-lock/`).
+- Quickshell (QML): left side bar with the apps, island with tabs (control center, system, apps, session), launcher, Overview, notification server (`quickshell/dap/`), lock screen (`quickshell/dap-lock/`).
 - fish/zsh with a terminal HUD, Ghostty/kitty, starship, fastfetch, qt6ct and KDE color scheme.
 
 ## Structure
@@ -30,7 +30,7 @@ are merged back there by hand, so keep commits small and focused.
 | `install.sh` | Installer: packages, config copy with backup, services, pilot name |
 
 ## Conventions
-- Workspace IDs stay numeric; names and colors are display only (`deskNames`, `deskColors` in `quickshell/dap/Ui.qml`).
+- Workspace IDs stay numeric; names are display only (`deskNames` in `quickshell/dap/Ui.qml`).
 - Colors and fonts: `quickshell/dap/Theme.qml`. No rainbow gradients.
 - New QML types need a `qmldir` entry and a full Quickshell restart; hot reload does not pick them up.
 - When `install.sh` gains a config path, add it to the Contents table in `README.md`.

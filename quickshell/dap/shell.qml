@@ -3,14 +3,12 @@ import Quickshell
 import Quickshell.Io
 
 ShellRoot {
-    Variants { model: Ui.barScreens; Bar {} }
+    Variants { model: Ui.barScreens; SideBar {} }
     Calendar {}
     Island {}
-    ControlCenter {}
     Launcher {}
     VolumeOsd {}
     Variants { model: Quickshell.screens; Overview {} }
-    Dock {}
     Screenshot {}
     Preview {}
 
@@ -23,6 +21,9 @@ ShellRoot {
             if (!Ui.island) Ui.toggle("island")
         }
         function island(): void { Ui.toggle("island") }
+        // 0 Music, 1 Calendar, 2 Focus, 3 Todo, 4 Notif, 5 Control, 6 System, 7 Hangar
+        function tab(i: int): void { Ui.openIsland(i) }
+        function power(): void { Ui.openPower() }
         function cc(): void { Ui.toggle("cc") }
         function screenshot(): void { Ui.toggle("shot") }
         function overview(): void { Ui.toggle("overview") }

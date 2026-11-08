@@ -1,7 +1,9 @@
 singleton Theme Theme.qml
+singleton Apps Apps.qml
 singleton Ui Ui.qml
 singleton Agenda Agenda.qml
-Bar Bar.qml
+SideBar SideBar.qml
+ControlPanel ControlPanel.qml
 Calendar Calendar.qml
 Island Island.qml
 IslandPill IslandPill.qml
@@ -13,7 +15,6 @@ NotchCalendar NotchCalendar.qml
 NotchFocus NotchFocus.qml
 NotchTodo NotchTodo.qml
 CavaBars CavaBars.qml
-ControlCenter ControlCenter.qml
 Launcher Launcher.qml
 VolumeOsd VolumeOsd.qml
 PageHeader PageHeader.qml
@@ -22,7 +23,6 @@ Tile Tile.qml
 Slide Slide.qml
 Overview Overview.qml
 Screenshot Screenshot.qml
-Dock Dock.qml
 DisplayPage DisplayPage.qml
 BluetoothPage BluetoothPage.qml
 DockMenu DockMenu.qml
@@ -30,7 +30,6 @@ Preview Preview.qml
 HazardStripe HazardStripe.qml
 DecodeText DecodeText.qml
 DapLogo DapLogo.qml
-CcPill CcPill.qml
 CcMainPage CcMainPage.qml
 CcWifiPage CcWifiPage.qml
 CcAudioPage CcAudioPage.qml
@@ -40,3 +39,8 @@ IslandHeader IslandHeader.qml
 PillField PillField.qml
 CcPop CcPop.qml
 MonoEye MonoEye.qml
+IslandShape IslandShape.qml
+Gauge Gauge.qml
+NotchSystem NotchSystem.qml
+NotchHangar NotchHangar.qml
+PowerSheet PowerSheet.qml

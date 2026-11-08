@@ -1,9 +1,18 @@
 # Celestial Being
 
-A Gundam 00 themed desktop for Arch Linux: Hyprland 0.57 (Lua config) with a Quickshell bar,
-island, control center, dock and lock screen, plus matching terminal, prompt and app colors.
+A Gundam 00 themed desktop for Arch Linux: Hyprland 0.57 (Lua config) with a Quickshell side bar,
+an island that grows out of the top edge into tabs, and a lock screen, plus matching terminal,
+prompt and app colors.
 
-Pilot callsigns, GN green, Trans-Am red, caution tape and a desktop for each Gundam. No rainbow.
+Pilot callsigns, GN green, anime blue and Trans-Am red, caution tape. No rainbow.
+
+<p>
+  <img src="docs/screenshots/desktop.png" width="820" alt="Side bar and closed island">
+</p>
+<p>
+  <img src="docs/screenshots/control.png" width="405" alt="Island Control tab">
+  <img src="docs/screenshots/system.png" width="405" alt="Island System tab">
+</p>
 
 ## Contents
 
@@ -22,6 +31,7 @@ Pilot callsigns, GN green, Trans-Am red, caution tape and a desktop for each Gun
 | `kde/kdeglobals` | `~/.config/kdeglobals` |
 | `kde/DapGN.colors` | `~/.local/share/color-schemes/DapGN.colors` |
 | `qt6ct/` | `~/.config/qt6ct/` |
+| `spotify-player/` | `~/.config/spotify-player/` (Celestial Being theme for the `spotify_player` terminal client, optional) |
 
 ## Install
 
@@ -56,23 +66,26 @@ After it finishes: add the images listed under "Files not included", set your mo
 
 Each command decodes out of noise before it runs. `sudo`/`doas`/`run0` get a caution stripe and `WARNING // ELEVATED ACCESS`; `git push` gets `GN DRIVE // EXIA LAUNCH`. After it runs: failures glitch red (`FAULT rc=N`), runs over 2 s print `CLEAR`, and runs over 30 s print `TRANS-AM COMPLETE` and send a notification to the island. TUIs (nvim, btop, ssh, …) are skipped; `NOANIM=1` keeps plain lines.
 
-## Island, control center and notifications
+## Layout: side bar and island
 
-- **Island** (`Island.qml`): the center of the bar. Collapsed it shows the date, time, CPU, RAM and GPU; click it to open tabs for Music, Calendar, Focus, Todo and Notif. Every tab change replays the header decode.
-- **Control center** (`ControlCenter.qml`): the right end of the bar. The status pill opens into the panel with a sonar ping and a glitch header.
-- **Gundam states:** Trans-Am (performance profile) turns the accent red and the window borders and open island red, green and yellow; Standby and Cruise use the current desktop's color. The closed island is a still GN green ring. NT-D (Do Not Disturb) turns the island ring solid red. The Wi-Fi and Bluetooth pages sweep a Zaku mono-eye while they load. On battery, the shell raises a critical "GN particles low" alarm at 15% and 5%.
-- **GN Sense** (optional, [gn-sense](https://github.com/parikesitad-pm/gn-sense)): power profile and keyboard RGB panel for Acer Nitro and Predator laptops. `hyprland.lua` starts it and binds the keyboard's N key (keycode 433); the control center tile opens it. Without gn-sense installed, both do nothing.
-- **Notifications:** the shell is the notification server (`NotificationServer` in `Ui.qml`); swaync is not started. `Super+N` opens the Notif tab. Action buttons (for example Answer and Decline) are passed back to the sending app.
+- **Side bar** (`SideBar.qml`, left edge): emblem (app menu), desktops, apps (pinned first, then running; right click for pin, new window, close), the desktop name, tray, status and power. Status opens the island's Control tab; power opens the session sheet.
+- **Island** (`Island.qml`, `IslandShape.qml`): hangs from the top edge with concave corners. Closed it shows the date, time, CPU, RAM and GPU; it grows out of the edge into tabs: Music, Calendar, Focus, Todo, Notif, Control, System, Hangar. `qs -c dap ipc call shell tab N` opens tab N (0 to 7).
+- **Control** (`ControlPanel.qml`): Wi-Fi, Bluetooth, appearance, NT-D, volume, mic, brightness, power profiles, displays, GN Sense, lock, session. The island grows to fit it.
+- **System** (`NotchSystem.qml`): gauges for CPU load, CPU temperature, memory and Iris Xe. The NVIDIA GPU is not read, since reading it wakes the card.
+- **Hangar** (`NotchHangar.qml`): every app, with search. The island opens extra wide on this tab. Type to filter, Enter launches the highlighted app, arrows move.
+- **Session sheet** (`PowerSheet.qml`): Lock runs at once; Logout, Restart and Shutdown need a second, explicit confirm under caution tape. `qs -c dap ipc call shell power` opens it.
+- **Colors:** window borders and the open island are anime blue, or red in Trans-Am (performance profile). The closed island is a still GN green ring. NT-D (Do Not Disturb) turns the ring psycho-frame red. The Wi-Fi and Bluetooth pages sweep a Zaku mono-eye while they load. On battery, a critical "GN particles low" alarm fires at 15% and 5%.
+- **GN Sense** (optional, [gn-sense](https://github.com/parikesitad-pm/gn-sense)): power profile and keyboard RGB panel for Acer Nitro and Predator laptops. `hyprland.lua` starts it and binds the keyboard's N key (keycode 433). Without gn-sense installed, both do nothing.
+- **Notifications:** the shell is the notification server (`NotificationServer` in `Ui.qml`); swaync is not started. `Super+N` opens the Notif tab. Action buttons are passed back to the sending app.
 - **Calendar and alarms** (`Agenda.qml`, `Ics.js`): alarms are saved in `~/.local/state/dap-shell-alarms.json`. To show Google Calendar events, paste the calendar's "Secret address in iCal format" into `~/.config/dap-shell/gcal-ics-url` (mode 600). That address gives read access to the calendar, so keep it out of the repo.
 
 ## Displays and desktops
 
-Four desktops always exist: Exia, Dynames, Kyrios and Virtue. **New desktop** in the Overview adds Freedom, Zaku, Unicorn, 00 Raiser, RX-78-2, Strike, Wing and Barbatos, in that order; an empty added desktop shows a close button on hover. Added desktops are gone after a restart. Each desktop has its own color on the window border, the bar and the Overview. Control Center > Arrange displays places the external monitor left or right of the laptop. The side is saved to `~/.local/state/dap-display-side`. Set your own monitors in the `hl.monitor(...)` lines of `hyprland.lua`.
+Four desktops always exist: Exia, Dynames, Kyrios and Virtue. **New desktop** in the Overview adds Freedom, Zaku, Unicorn, 00 Raiser, RX-78-2, Strike, Wing and Barbatos, in that order; an empty added desktop shows a close button on hover. Added desktops are gone after a restart. Control Center > Arrange displays places the external monitor left or right of the laptop. The side is saved to `~/.local/state/dap-display-side`. Set your own monitors in the `hl.monitor(...)` lines of `hyprland.lua`.
 
-## Dock, app menu and Quick Look
+## App menu and Quick Look
 
-- **Dock:** hidden until the pointer reaches the bottom screen edge. `Dock.qml` maps its window only while open; a 2 px strip window is the trigger, so windows keep the full height.
-- **App menu:** `Launcher.qml`, a searchable grid. It opens from the dock's Apps button, the bar, or `Super+Space`.
+- **App menu:** `Launcher.qml`, a searchable grid. It opens from the side bar's emblem or `Super+Space`.
 - **Quick Look:** `Alt+Space` in Dolphin runs `hypr/scripts/preview.sh`. Images and text open in `Preview.qml`; other file types open in their default app. Other apps still receive the key.
 
 Dolphin has no D-Bus call for the selection, so `preview.sh` triggers its Copy Location action, then restores the clipboard and removes the path from the cliphist history. Only one clipboard format is restored, so formatted text can paste as plain text.
@@ -109,4 +122,5 @@ Exported from the author's daily setup on an Acer Nitro AN515-56. The installer 
 ## License
 
 MIT, copyright Dausan Adam Parikesit (dap_). See [LICENSE](LICENSE). Gundam and Celestial Being are
-trademarks of Sunrise/Bandai Namco; this is an unofficial fan theme.
+trademarks of Sunrise/Bandai Namco; this is an unofficial fan theme. Screenshots use a plain
+background; the wallpapers are not included.

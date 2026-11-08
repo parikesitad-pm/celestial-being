@@ -1,0 +1,44 @@
+# Celestial Being: GN green accents, anime blue, Trans-Am red, gold. No rainbow.
+[[themes]]
+name = "celestial"
+
+[themes.palette]
+background = "#070b14"
+foreground = "#f2f6ff"
+black = "#0b1220"
+bright_black = "#3a4358"
+red = "#ff2e63"
+bright_red = "#ff5c8a"
+green = "#2ee6a8"
+bright_green = "#6af2c4"
+yellow = "#f2b705"
+bright_yellow = "#ffd23f"
+blue = "#4fb6ff"
+bright_blue = "#8fd0ff"
+magenta = "#a855f7"
+bright_magenta = "#c48bfa"
+cyan = "#00e5ff"
+bright_cyan = "#66f0ff"
+white = "#a7b3cc"
+bright_white = "#f2f6ff"
+
+[themes.component_style]
+block_title = { fg = "#f2b705", modifiers = ["Bold"] }
+border = { fg = "#3a4358" }
+playback_status = { fg = "#2ee6a8", modifiers = ["Bold"] }
+playback_track = { fg = "#f2f6ff", modifiers = ["Bold"] }
+playback_artists = { fg = "#4fb6ff" }
+playback_album = { fg = "#a7b3cc" }
+playback_metadata = { fg = "#3a4358" }
+playback_progress_bar = { fg = "#2ee6a8", bg = "#0b1220" }
+playback_progress_bar_unfilled = { fg = "#1b2a4a" }
+current_playing = { fg = "#2ee6a8", modifiers = ["Bold"] }
+page_desc = { fg = "#f2b705", modifiers = ["Bold"] }
+playlist_desc = { fg = "#a7b3cc", modifiers = ["Dim"] }
+table_header = { fg = "#4fb6ff", modifiers = ["Bold"] }
+selection = { fg = "#04120d", bg = "#2ee6a8", modifiers = ["Bold"] }
+secondary_row = { bg = "#0b1220" }
+like = { fg = "#ff2e63" }
+lyrics_played = { fg = "#3a4358" }
+lyrics_playing = { fg = "#2ee6a8", modifiers = ["Bold"] }
+visualization = { low = "#1b2a4a", mid = "#4fb6ff", high = "#2ee6a8" }

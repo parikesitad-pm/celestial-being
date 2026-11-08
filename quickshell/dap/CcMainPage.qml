@@ -8,7 +8,9 @@ Flow {
     id: mainPage
     required property var cc
     spacing: 8
-    function span(n) { return n * 21 + (n - 1) * 8 }
+    // 12-column grid with 8 px gaps across whatever width the island gives it.
+    readonly property real cell: (width - 88) / 12
+    function span(n) { return Math.floor(n * cell + (n - 1) * 8) }
 
     Tile {
         width: mainPage.span(6)
@@ -146,11 +148,11 @@ Flow {
     Tile {
         width: mainPage.span(6)
         glyph: Theme.g(0xF030C); title: "GN Sense"; sub: "Power · RGB"
-        onClicked: { Ui.cc = false; Ui.sh(Quickshell.env("HOME") + "/.local/bin/gn-sense") }
+        onClicked: { Ui.island = false; Ui.sh(Quickshell.env("HOME") + "/.local/bin/gn-sense") }
     }
     Tile {
         width: mainPage.span(6); glyph: Theme.g(0xF033E); title: "Lock"
-        onClicked: { Ui.cc = false; Ui.sh(Theme.scripts + "lock.sh") }
+        onClicked: { Ui.island = false; Ui.sh(Theme.scripts + "lock.sh") }
     }
 
     // session: first click arms the tile ("Confirm?"), second click within 3 s runs it
@@ -166,7 +168,7 @@ Flow {
             glyph: Theme.g(modelData.g); title: mainPage.cc.armed === modelData.k ? "Confirm?" : modelData.t
             on: mainPage.cc.armed === modelData.k; onColor: Theme.red
             onClicked: {
-                if (mainPage.cc.armed === modelData.k) { mainPage.cc.armed = ""; Ui.cc = false; Ui.sh(modelData.c) }
+                if (mainPage.cc.armed === modelData.k) { mainPage.cc.armed = ""; Ui.island = false; Ui.sh(modelData.c) }
                 else { mainPage.cc.armed = modelData.k; mainPage.cc.armLater() }
             }
         }

@@ -26,5 +26,5 @@ ColumnLayout {
             onPicked: { page.cc.defSource = modelData.name; Ui.sh("pactl set-default-source '" + modelData.name + "'"); afterSet.restart() }
         }
     }
-    PickRow { title: "Advanced mixer…"; onPicked: { Ui.cc = false; Ui.sh("pavucontrol") } }
+    PickRow { title: "Advanced mixer…"; onPicked: { Ui.island = false; Ui.sh("pavucontrol") } }
 }
