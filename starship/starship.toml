@@ -1,0 +1,78 @@
+# dap_ // d-ap.my.id — powerline layout, neon palette, Arch icon
+add_newline = true
+command_timeout = 500
+
+format = """
+[](#9d4edd)$os$username[](fg:#9d4edd bg:#ff2e97)\
+$directory[](fg:#ff2e97 bg:#00f0ff)\
+$git_branch$git_status[](fg:#00f0ff bg:#1a1033)\
+$nodejs$ruby$php$golang$rust$python$cmd_duration[](fg:#1a1033)
+$character"""
+
+[os]
+disabled = false
+style = "bg:#9d4edd fg:#0b0615"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Arch = ""
+
+[directory]
+style = "bold bg:#ff2e97 fg:#0b0615"
+truncation_length = 1
+truncation_symbol = ""
+format = "[ $path ]($style)"
+
+[git_branch]
+symbol = " "
+style = "bg:#00f0ff fg:#0b0615"
+format = "[ $symbol$branch ]($style)"
+
+[git_status]
+style = "bg:#00f0ff fg:#0b0615"
+format = "[$all_status$ahead_behind ]($style)"
+
+[nodejs]
+symbol = " "
+style = "bg:#1a1033 fg:#39ff14"
+format = "[ $symbol$version ]($style)"
+
+[ruby]
+symbol = " "
+style = "bg:#1a1033 fg:#ff2e97"
+format = "[ $symbol$version ]($style)"
+
+[php]
+symbol = " "
+style = "bg:#1a1033 fg:#9d4edd"
+format = "[ $symbol$version ]($style)"
+
+[golang]
+symbol = " "
+style = "bg:#1a1033 fg:#00f0ff"
+format = "[ $symbol$version ]($style)"
+
+[rust]
+symbol = " "
+style = "bg:#1a1033 fg:#fcee0a"
+format = "[ $symbol$version ]($style)"
+
+[python]
+symbol = " "
+style = "bg:#1a1033 fg:#fcee0a"
+format = "[ $symbol$version ]($style)"
+
+[cmd_duration]
+min_time = 2000
+style = "bg:#1a1033 fg:#9d4edd"
+format = "[  $duration ]($style)"
+
+[character]
+success_symbol = "[❯](bold #00f0ff)"
+error_symbol = "[❯](bold #ff2e97)"
+
+[username]
+show_always = true
+style_user = "bg:#9d4edd fg:#0b0615"
+style_root = "bold bg:#9d4edd fg:#ff2e97"
+format = "[$user ]($style)"

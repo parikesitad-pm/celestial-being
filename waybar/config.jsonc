@@ -1,0 +1,68 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "margin-top": 6,
+  "margin-left": 10,
+  "margin-right": 10,
+  "spacing": 4,
+
+  "modules-left": ["custom/brand", "hyprland/workspaces", "hyprland/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["cpu", "custom/gpu", "memory", "temperature", "pulseaudio", "bluetooth", "network", "battery", "custom/notif", "tray"],
+
+  "custom/brand": {
+    "format": "  dap_",
+    "tooltip": true,
+    "tooltip-format": "d-ap.my.id",
+    "on-click": "hyprlauncher"
+  },
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": { "active": "", "default": "", "empty": "" },
+    "persistent-workspaces": { "*": 5 },
+    "on-scroll-up": "hyprctl dispatch workspace e-1",
+    "on-scroll-down": "hyprctl dispatch workspace e+1"
+  },
+
+  "hyprland/window": { "format": "{class}", "max-length": 30, "separate-outputs": true },
+
+  "clock": {
+    "format": "{:%a %d %b  %H:%M}",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": { "mode": "month", "format": { "today": "<span color='#ff2e97'><b>{}</b></span>" } }
+  },
+
+  "cpu":    { "interval": 2, "format": "󰻠 {usage}%", "on-click": "kitty -e btop" },
+  "memory": { "interval": 3, "format": "󰍛 {used:0.1f}G", "tooltip-format": "RAM {used:0.1f}/{total:0.1f} GiB\nSwap {swapUsed:0.1f}/{swapTotal:0.1f} GiB (zram)", "on-click": "kitty -e btop" },
+
+  "custom/gpu": {
+    "exec": "~/.config/hypr/scripts/gpu.sh",
+    "return-type": "json",
+    "interval": 2,
+    "on-click": "kitty -e nvtop"
+  },
+
+  "temperature": { "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon", "input-filename": "temp1_input", "critical-threshold": 85, "format": " {temperatureC}°" },
+
+  "pulseaudio": { "format": "{icon} {volume}%", "format-muted": "󰝟", "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] }, "on-click": "python3 ~/.config/hypr/scripts/controlcenter.py", "on-click-right": "pavucontrol" },
+  "bluetooth": {
+    "format": "󰂯", "format-off": "󰂲", "format-disabled": "󰂲", "format-connected": "󰂱 {device_alias}", "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}%",
+    "tooltip-format": "{controller_alias}\t{controller_address}", "tooltip-format-connected": "{device_enumerate}",
+    "on-click": "blueman-manager"
+  },
+  "network":    { "format-wifi": "󰤨 {signalStrength}%", "format-ethernet": "󰈀", "format-disconnected": "󰤭", "tooltip-format": "{essid} {ipaddr}", "on-click": "python3 ~/.config/hypr/scripts/controlcenter.py" },
+  "battery":    { "states": { "warning": 25, "critical": 12 }, "format": "{icon} {capacity}%", "format-charging": "󰂄 {capacity}%", "format-icons": ["󰁺", "󰁼", "󰁿", "󰂁", "󰁹"] },
+
+  "custom/notif": {
+    "exec": "swaync-client -swb",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": { "notification": "󱅫", "none": "󰂜", "dnd-notification": "󰂛", "dnd-none": "󰪑" },
+    "on-click": "swaync-client -t -sw",
+    "escape": true
+  },
+
+  "tray": { "icon-size": 16, "spacing": 8 }
+}

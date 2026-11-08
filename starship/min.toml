@@ -1,0 +1,37 @@
+# Fish prompt for panes under 60 columns: one line, same identity as the wider layouts.
+add_newline = false
+command_timeout = 500
+palette = "neon"
+
+format = "[◤◢ ](warn)$os$username$directory $character"
+
+[palettes.neon]
+accent = "#00f0ff"
+ink = "#d6f7ff"
+mute = "#8a78b8"
+warn = "#fcee0a"
+fault = "#ff2e97"
+
+[os]
+disabled = false
+format = "[$symbol ](accent)"
+
+[os.symbols]
+Arch = ""
+
+[username]
+show_always = true
+style_user = "bold ink"
+style_root = "bold fault"
+format = "[$user]($style)"
+
+[directory]
+truncation_length = 1
+truncation_symbol = ""
+truncate_to_repo = false
+read_only = " ro"
+format = "[ ── ](mute)[$path](accent)[$read_only](fault)"
+
+[character]
+success_symbol = "[❯](bold accent)"
+error_symbol = "[❯](bold fault)"

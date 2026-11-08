@@ -1,0 +1,48 @@
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+}
+
+window#waybar { background: transparent; }
+
+/* floating glass pill, macOS-menubar-ish, neon edge */
+.modules-left, .modules-center, .modules-right {
+  background: rgba(11, 6, 21, 0.72);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 16px;
+  padding: 0 10px;
+  box-shadow: 0 0 14px rgba(255, 46, 151, 0.25);
+}
+
+tooltip { background: #0b0615; border: 1px solid #ff2e97; border-radius: 10px; color: #d6f7ff; }
+
+#custom-brand { color: #ff2e97; font-weight: 800; padding: 0 8px; text-shadow: 0 0 8px #ff2e97; }
+
+#workspaces button { color: #5b4a86; padding: 0 5px; background: transparent; transition: all 0.25s ease; }
+#workspaces button.active { color: #00f0ff; text-shadow: 0 0 10px #00f0ff; }
+#workspaces button.empty { color: #3a2d5c; }
+#workspaces button:hover { color: #ff2e97; background: transparent; }
+
+#window { color: #9d8fc4; padding: 0 8px; }
+#clock  { color: #d6f7ff; font-weight: 700; padding: 0 12px; }
+
+#cpu, #custom-gpu, #memory, #temperature, #pulseaudio, #network, #battery, #custom-notif, #tray { padding: 0 9px; }
+
+#cpu          { color: #00f0ff; }
+#custom-gpu   { color: #ff2e97; }
+#memory       { color: #fcee0a; }
+#temperature  { color: #39ff14; }
+#pulseaudio   { color: #9d4edd; }
+#network      { color: #00f0ff; }
+#battery      { color: #39ff14; }
+#battery.warning  { color: #fcee0a; }
+#battery.critical { color: #ff2e97; }
+#temperature.critical { color: #ff2e97; }
+#custom-notif { color: #d6f7ff; }
+#bluetooth { color: #9d4edd; padding: 0 9px; }
+#bluetooth.connected { color: #00f0ff; }
+#bluetooth.off, #bluetooth.disabled { color: #5b4a86; }

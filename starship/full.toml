@@ -1,0 +1,70 @@
+# Fish prompt for panes of 100+ columns. zsh keeps the powerline in ~/.config/starship.toml.
+add_newline = true
+command_timeout = 500
+palette = "neon"
+
+format = """
+[◤◢◤◢ ](warn)$os$username$directory$git_branch$git_status$nodejs$ruby$php$golang$rust$python
+$character"""
+
+[palettes.neon]
+accent = "#00f0ff"
+ink = "#d6f7ff"
+mute = "#8a78b8"
+warn = "#fcee0a"
+fault = "#ff2e97"
+
+[os]
+disabled = false
+format = "[$symbol ](accent)"
+
+[os.symbols]
+Arch = ""
+
+[username]
+show_always = true
+style_user = "bold ink"
+style_root = "bold fault"
+format = "[$user]($style)"
+
+[directory]
+truncation_length = 1
+truncation_symbol = ""
+truncate_to_repo = false
+read_only = " ro"
+format = "[ ── ](mute)[$path](accent)[$read_only](fault)"
+
+[git_branch]
+symbol = ""
+format = "[ ── ](mute)[$branch](ink)"
+
+[git_status]
+format = "([ $all_status$ahead_behind](warn))"
+
+[nodejs]
+version_format = "${major}"
+format = "[ ── node $version](mute)"
+
+[ruby]
+version_format = "${major}.${minor}"
+format = "[ ── ruby $version](mute)"
+
+[php]
+version_format = "${major}.${minor}"
+format = "[ ── php $version](mute)"
+
+[golang]
+version_format = "${major}.${minor}"
+format = "[ ── go $version](mute)"
+
+[rust]
+version_format = "${major}.${minor}"
+format = "[ ── rust $version](mute)"
+
+[python]
+version_format = "${major}.${minor}"
+format = "[ ── py $version](mute)"
+
+[character]
+success_symbol = "[❯](bold accent)"
+error_symbol = "[❯](bold fault)"

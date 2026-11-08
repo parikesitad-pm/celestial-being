@@ -1,0 +1,112 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   ~/.config/ghostty/config.ghostty
+#
+# The template does not set any default options, since Ghostty ships
+# with sensible defaults for all options.
+# Note that you should not paste the output of `ghostty +show-config
+# --default` into your config: some default options actually conflict with each other
+# when explicitly set in a configuration file. Instead, only set the
+# options you actually need.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Additionally, each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+#
+# Ghostty can reload the configuration while running by using the menu
+# options or the bound key (default: Command + Shift + comma on macOS and
+# Control + Shift + comma on other platforms). Not all config options can be
+# reloaded while running; some only apply to new windows and others may require
+# a full restart to take effect.
+
+# Config syntax crash course
+# ==========================
+# # The config file consists of simple key-value pairs,
+# # separated by equals signs.
+# font-family = Iosevka
+# window-padding-x = 2
+#
+# # Spacing around the equals sign does not matter.
+# # All of these are identical:
+# key=value
+# key= value
+# key =value
+# key = value
+#
+# # Any line beginning with a # is a comment. It's not possible to put
+# # a comment after a config option, since it would be interpreted as a
+# # part of the value. For example, this will have a value of "#123abc":
+# background = #123abc
+#
+# # Empty values are used to reset config keys to default.
+# key =
+#
+# # Some config options have unique syntaxes for their value,
+# # which is explained in the docs for that config option.
+# # Just for example:
+# resize-overlay-duration = 4s 200ms
+
+command = /usr/bin/fish
+
+# Font
+font-family = JetBrainsMono Nerd Font
+font-size = 10
+adjust-cell-height = 5%
+
+# Window
+background-opacity = 0.95
+window-padding-x = 12
+window-padding-y = 10
+window-decoration = none
+confirm-close-surface = false
+copy-on-select = clipboard
+cursor-style = bar
+
+window-padding-balance = true
+resize-overlay = never
+
+# Off: its animation loop measured 12.13% of a core at idle, against 0.07% without it.
+# custom-shader = shaders/thruster.glsl
+
+# Neon palette. Cyan is the accent; pink is reserved for errors.
+foreground = #d6f7ff
+background = #0b0615
+selection-foreground = #0b0615
+selection-background = #00f0ff
+cursor-color = #00f0ff
+cursor-text = #0b0615
+palette = 0=#1a1033
+palette = 1=#ff2e97
+palette = 2=#39ff14
+palette = 3=#fcee0a
+palette = 4=#9d4edd
+palette = 5=#ff00ff
+palette = 6=#00f0ff
+palette = 7=#d6f7ff
+palette = 8=#8a78b8
+palette = 9=#ff6ac1
+palette = 10=#7dff5c
+palette = 11=#fff86b
+palette = 12=#c084fc
+palette = 13=#ff7bff
+palette = 14=#7ffbff
+palette = 15=#ffffff
+
+# Shortcuts, shared with kitty
+keybind = super+t=new_tab
+keybind = super+shift+t=new_tab
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+c=copy_to_clipboard
+keybind = super+shift+v=paste_from_clipboard
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+zero=reset_font_size
+keybind = ctrl+shift+m=toggle_split_zoom
+
+env = SHELL=/usr/bin/fish
