@@ -25,7 +25,7 @@ SITE=""
 PACMAN_PKGS=(
   # compositor and shell
   hyprland quickshell hyprpaper hypridle hyprlock hyprpicker hyprsunset hyprlauncher hyprshutdown
-  xdg-desktop-portal-hyprland xdg-desktop-portal-gtk polkit-kde-agent qt6ct
+  xdg-desktop-portal-hyprland xdg-desktop-portal-gtk polkit-kde-agent qt6ct papirus-icon-theme
   # terminals and command line
   ghostty kitty fish zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions starship fastfetch eza bat ripgrep fd fzf zoxide jq btop git curl
   # audio, media, notifications
@@ -37,7 +37,7 @@ PACMAN_PKGS=(
   # apps, fonts, glue
   dolphin xdg-utils glib2 ttf-jetbrains-mono-nerd inter-font noto-fonts-emoji
 )
-AUR_PKGS=(candy-icons-git bibata-cursor-theme-bin)
+AUR_PKGS=(papirus-folders bibata-cursor-theme-bin)
 
 # repo path (relative to the repo root)  →  install path
 LINKS=(
@@ -146,6 +146,8 @@ if (( PACKAGES )); then
     run rm -rf "$tmp"
   fi
   run yay -S --needed --noconfirm "${AUR_PKGS[@]}" || info "AUR step failed; rerun later: yay -S ${AUR_PKGS[*]}"
+  # Teal folders in Papirus-Dark, close to GN green.
+  command -v papirus-folders >/dev/null && run sudo papirus-folders -C teal --theme Papirus-Dark
 else
   say "1-2/5 Packages skipped"
 fi

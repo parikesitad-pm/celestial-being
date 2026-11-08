@@ -101,7 +101,7 @@ ColorScheme=DapGN
 Name=Dap GN
 
 [Icons]
-Theme=candy-icons
+Theme=Papirus-Dark
 
 [KDE]
 SingleClick=false

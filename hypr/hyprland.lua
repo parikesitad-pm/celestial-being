@@ -37,7 +37,7 @@ hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 ------------------ AUTOSTART ------------------
 hl.on("hyprland.start", function()
   hl.exec_cmd("hyprpaper")
-  hl.exec_cmd("env QS_ICON_THEME=candy-icons quickshell -c dap")  -- side bar, island (tabs, search, control center), OSD (fallback: waybar)
+  hl.exec_cmd("env QS_ICON_THEME=Papirus-Dark quickshell -c dap")  -- side bar, island (tabs, search, control center), OSD (fallback: waybar)
   -- swaync retired: the quickshell island is the notification server now
   hl.exec_cmd("hypridle")
   hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
@@ -45,7 +45,7 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("hyprsunset")
   hl.exec_cmd("blueman-applet")
   hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme prefer-dark")
-  hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme candy-icons")
+  hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark")
   hl.exec_cmd("gsettings set org.gnome.desktop.interface cursor-theme GN-Sonar")
 end)
 
