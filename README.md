@@ -91,6 +91,7 @@ Four desktops always exist: Exia, Dynames, Kyrios and Virtue. **New desktop** in
 ## App menu and Quick Look
 
 - **App menu:** `Launcher.qml`, a searchable grid. It opens from the side bar's emblem or `Super+Space`.
+- **Screenshots:** ⌘⇧3 screen, ⌘⇧4 selection, ⌘⇧W window, ⌘⇧5 toolbar, ⌘⇧6 record. The selection picker (`RegionSelect.qml`) dims the rest of the screen, runs guide lines from the selection's edges, and has corner handles: drag to select, drag inside to move, drag a corner to resize, Enter or double-click to capture, Esc to cancel. GN green for screenshots, Trans-Am red for recording. Files go to `~/Pictures/Screenshots` and the clipboard.
 - **Quick Look:** `Alt+Space` in Dolphin runs `hypr/scripts/preview.sh`. Images and text open in `Preview.qml`; other file types open in their default app. Other apps still receive the key.
 
 Dolphin has no D-Bus call for the selection, so `preview.sh` triggers its Copy Location action, then restores the clipboard and removes the path from the cliphist history. Only one clipboard format is restored, so formatted text can paste as plain text.

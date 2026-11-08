@@ -183,7 +183,7 @@ hl.bind(m .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Screenshots like macOS: ⌘⇧3 screen, ⌘⇧4 selection, ⌘⇧4 then ⌘⇧W window, ⌘⇧5 toolbar, ⌘⇧6 record. Saved to ~/Pictures/Screenshots + clipboard
 hl.bind(m .. " + SHIFT + 3", hl.dsp.exec_cmd(script .. "screenshot.sh full"))
-hl.bind(m .. " + SHIFT + 4", hl.dsp.exec_cmd(script .. "screenshot.sh region"))
+hl.bind(m .. " + SHIFT + 4", hl.dsp.exec_cmd("qs -c dap ipc call shell select shot"))  -- region picker with corner handles
 hl.bind(m .. " + SHIFT + W", hl.dsp.exec_cmd(script .. "screenshot.sh window"))
 hl.bind(m .. " + SHIFT + 5", hl.dsp.exec_cmd("qs -c dap ipc call shell screenshot"))
 hl.bind(m .. " + SHIFT + 6", hl.dsp.exec_cmd(script .. "screenshot.sh record"))

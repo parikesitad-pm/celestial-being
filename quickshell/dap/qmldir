@@ -44,3 +44,4 @@ Gauge Gauge.qml
 NotchSystem NotchSystem.qml
 NotchHangar NotchHangar.qml
 PowerSheet PowerSheet.qml
+RegionSelect RegionSelect.qml

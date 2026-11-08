@@ -55,10 +55,10 @@ PanelWindow {
             anchors.centerIn: parent; spacing: 2
             Btn { glyph: "▣"; label: "Screen";    onClicked: win.run("full") }
             Btn { glyph: "▭"; label: "Window";    onClicked: win.run("window") }
-            Btn { glyph: "⬚"; label: "Selection"; onClicked: win.run("region") }
+            Btn { glyph: "⬚"; label: "Selection"; onClicked: { Ui.shot = false; Ui.select = "shot" } }
             Rectangle { width: 1; Layout.preferredHeight: 24; color: Theme.stroke }
             Btn { glyph: "●"; label: "Record screen";    onClicked: win.run("record") }
-            Btn { glyph: "◉"; label: "Record selection"; onClicked: win.run("record-region") }
+            Btn { glyph: "◉"; label: "Record selection"; onClicked: { Ui.shot = false; Ui.select = "record" } }
             Rectangle { width: 1; Layout.preferredHeight: 24; color: Theme.stroke }
             Btn { glyph: "✕"; label: ""; danger: true; onClicked: Ui.shot = false }
         }

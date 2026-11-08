@@ -10,6 +10,7 @@ ShellRoot {
     VolumeOsd {}
     Variants { model: Quickshell.screens; Overview {} }
     Screenshot {}
+    RegionSelect {}
     Preview {}
 
     IpcHandler {
@@ -26,6 +27,8 @@ ShellRoot {
         function power(): void { Ui.openSheet("launch") }
         function bridge(): void { Ui.openSheet("bridge") }
         function sense(): void { Ui.openSheet("sense") }
+        // Region picker: "shot" (screenshot) or "record".
+        function select(mode: string): void { Ui.closeAll(); Ui.select = mode }
         function cc(): void { Ui.toggle("cc") }
         function screenshot(): void { Ui.toggle("shot") }
         function overview(): void { Ui.toggle("overview") }

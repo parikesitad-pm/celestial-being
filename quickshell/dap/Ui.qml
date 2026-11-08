@@ -235,11 +235,13 @@ Singleton {
     property var now: new Date()
     SystemClock { id: clk; precision: SystemClock.Seconds; onDateChanged: s.now = clk.date }
 
-    function closeAll() { sheet = ""; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
+    function closeAll() { sheet = ""; select = ""; island = false; launcher = false; calendar = false; cc = false; overview = false; shot = false; preview = false }
     // Island tabs (see Island.tabs): 0 Haro, 1 Mission, 2 Sortie, 3 Orders, 4 Comms, 5 Veda, 6 Hangar.
     // Sheets shown in the island instead of the tabs: "bridge" (control center), "launch" (session),
     // "sense" (gn-sense).
     property string sheet: ""
+    // Region picker (RegionSelect.qml): "shot" or "record" while it is open.
+    property string select: ""
     // gn-sense's card, embedded as the "sense" sheet; empty when gn-sense is not installed.
     readonly property string senseCardPath: Quickshell.env("HOME") + "/.config/quickshell/gn-sense/SenseCard.qml"
     property string senseCard: ""
