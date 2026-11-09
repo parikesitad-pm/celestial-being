@@ -3,7 +3,7 @@ add_newline = false
 command_timeout = 500
 palette = "neon"
 
-format = "[◤◢ ](warn)$os$username$directory $character"
+format = "[◤◢ ](warn)$os$username$directory ${env_var.VEDA_OK}${env_var.VEDA_HIGH}$character"
 
 [palettes.neon]
 accent = "#00f0ff"
@@ -35,3 +35,12 @@ format = "[ ── ](mute)[$path](accent)[$read_only](fault)"
 [character]
 success_symbol = "[❯](bold accent)"
 error_symbol = "[❯](bold fault)"
+
+# VEDA LOG threat badge, set by the fish HUD after every command.
+[env_var.VEDA_OK]
+variable = "VEDA_OK"
+format = "[◆ $env_value ](accent)"
+
+[env_var.VEDA_HIGH]
+variable = "VEDA_HIGH"
+format = "[◆ $env_value ](bold fault)"

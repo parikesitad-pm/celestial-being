@@ -5,7 +5,7 @@ palette = "neon"
 
 format = """
 [◤◢◤◢ ](warn)$os$username$directory$git_branch$git_status
-$character"""
+${env_var.VEDA_OK}${env_var.VEDA_HIGH}$character"""
 
 [palettes.neon]
 accent = "#00f0ff"
@@ -44,3 +44,12 @@ format = "([ $all_status$ahead_behind](warn))"
 [character]
 success_symbol = "[❯](bold accent)"
 error_symbol = "[❯](bold fault)"
+
+# VEDA LOG threat badge, set by the fish HUD after every command.
+[env_var.VEDA_OK]
+variable = "VEDA_OK"
+format = "[◆ $env_value ](accent)"
+
+[env_var.VEDA_HIGH]
+variable = "VEDA_HIGH"
+format = "[◆ $env_value ](bold fault)"
