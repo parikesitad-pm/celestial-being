@@ -38,7 +38,6 @@ IslandHeader IslandHeader.qml
 PillField PillField.qml
 CcPop CcPop.qml
 MonoEye MonoEye.qml
-IslandShape IslandShape.qml
 Gauge Gauge.qml
 NotchSystem NotchSystem.qml
 NotchHangar NotchHangar.qml

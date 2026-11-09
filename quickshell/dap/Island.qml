@@ -13,7 +13,7 @@ PanelWindow {
     implicitHeight: 900
     color: "transparent"
     // The bar moved to the left edge; the island now keeps the top strip clear of windows.
-    exclusiveZone: 40
+    exclusiveZone: 46
     WlrLayershell.namespace: "dap-island"
     // Search takes the keyboard at once (on-demand focus only arrives after a click or hover).
     // Exclusive focus clears a focus grab immediately, which would close the island, so search
@@ -66,35 +66,11 @@ PanelWindow {
         : Ui.sheet === "sense" && senseCard.item ? Math.min(sheetChrome + senseCard.item.implicitHeight, (screen ? screen.height : 1080) - 60)
         : tab === 6 ? 470 : 388
 
-    // Body hanging from the top edge, with concave fillets into it. Drawn under the content.
-    IslandShape {
-        id: ringGlow
-        x: shape.x; y: 0
-        w: shape.width; h: shape.height
-        radius: shape.radius
-        fillet: win.mode === "open" ? 18 : 12
-        fill: win.mode === "pill" && pillArea.containsMouse ? Theme.glassStrong : Theme.glass
-        // Measured: spinning on the always-visible pill cost ~18% of a core, so it only
-        // travels while the island is open or showing a toast.
-        spinning: win.mode !== "pill" && !Ui.dnd
-        solid: Ui.dnd ? Qt.rgba(Theme.psycho.r, Theme.psycho.g, Theme.psycho.b, 0.45 + 0.55 * breathe) : "transparent"
-        // NT-D breathes only while the island is open or toasting; the always-on pill stays still.
-        property real breathe: 1
-        SequentialAnimation on breathe {
-            running: Ui.dnd && win.mode !== "pill"
-            loops: Animation.Infinite
-            onRunningChanged: if (!running) ringGlow.breathe = 1
-            NumberAnimation { to: 0; duration: 900; easing.type: Easing.InOutSine }
-            NumberAnimation { to: 1; duration: 900; easing.type: Easing.InOutSine }
-        }
-        // Closed: GN green radar. Open or toasting: anime blue / Trans-Am red.
-        colors: win.mode === "pill" ? [Theme.gn, Qt.darker(Theme.gn, 2.6), Theme.gn, Qt.darker(Theme.gn, 2.6)] : null
-        Behavior on fillet { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
-    }
-
     Rectangle {
         id: shape
         anchors.horizontalCenter: parent.horizontalCenter
+        // Floats 6 px below the screen edge, like the sidebar's margins.
+        y: 6
         // Hangar (apps only) opens extra wide.
         width: win.mode === "open" ? (win.tab === 6 && Ui.sheet === "" ? 900 : 600) : win.mode === "toast" ? 460 : pill.implicitWidth + 40
         height: win.mode === "open" ? win.openHeight : win.mode === "toast" ? 64 : 36
@@ -102,9 +78,30 @@ PanelWindow {
         Behavior on width { Spring {} }
         Behavior on height { Spring {} }
         Behavior on radius { Spring {} }
-        // The visible body is IslandShape (attached to the top edge); this item sizes, clips and masks.
-        color: "transparent"
+        color: win.mode === "pill" && pillArea.containsMouse ? Theme.glassStrong : Theme.glass
         clip: true
+
+        // Same body as the sidebar: a floating glass rectangle with a glow ring.
+        GlowRing {
+            id: ringGlow
+            anchors.fill: parent
+            radius: parent.radius
+            // Measured: spinning on the always-visible pill cost ~18% of a core, so it only
+            // travels while the island is open or showing a toast.
+            spinning: win.mode !== "pill" && !Ui.dnd
+            solid: Ui.dnd ? Qt.rgba(Theme.psycho.r, Theme.psycho.g, Theme.psycho.b, 0.45 + 0.55 * breathe) : "transparent"
+            // NT-D breathes only while the island is open or toasting; the always-on pill stays still.
+            property real breathe: 1
+            SequentialAnimation on breathe {
+                running: Ui.dnd && win.mode !== "pill"
+                loops: Animation.Infinite
+                onRunningChanged: if (!running) ringGlow.breathe = 1
+                NumberAnimation { to: 0; duration: 900; easing.type: Easing.InOutSine }
+                NumberAnimation { to: 1; duration: 900; easing.type: Easing.InOutSine }
+            }
+            // Closed: GN green radar. Open or toasting: anime blue / Trans-Am red.
+            colors: win.mode === "pill" ? [Theme.gn, Qt.darker(Theme.gn, 2.6), Theme.gn, Qt.darker(Theme.gn, 2.6)] : null
+        }
 
         MouseArea {
             id: pillArea
@@ -149,7 +146,8 @@ PanelWindow {
             running: visible
         }
 
-        Item {
+        // A focus scope, so focus given to the panel lands on the sheet's input instead of the panel.
+        FocusScope {
             id: panel
             anchors.fill: parent
             anchors.margins: 16

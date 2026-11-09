@@ -74,7 +74,7 @@ Each command decodes out of noise before it runs. `sudo`/`doas`/`run0` get a cau
 ## Layout: side bar and island
 
 - **Side bar** (`SideBar.qml`, left edge): emblem (app menu), desktops, apps (pinned first, then running; right click for pin, new window, close), the desktop name, tray, the Arch logo with status (volume, Bluetooth, LAN, Wi-Fi, battery), and power. The Arch logo opens the Bridge; power opens the Launch Bay.
-- **Island** (`Island.qml`, `IslandShape.qml`): hangs from the top edge with concave corners. Closed it shows the date, time, CPU, RAM and GPU; it grows out of the edge into tabs: Haro (music), Mission (calendar), Sortie (focus timer), Orders (todo), Comms (notifications), Veda (system), Hangar (apps). `qs -c dap ipc call shell tab N` opens tab N (0 to 6).
+- **Island** (`Island.qml`): floats just under the top edge with the same glass and glow ring as the side bar. Closed it shows the date, time, CPU, RAM and GPU; it opens into tabs: Haro (music), Mission (calendar), Sortie (focus timer), Orders (todo), Comms (notifications), Veda (system), Hangar (apps). `qs -c dap ipc call shell tab N` opens tab N (0 to 6).
 - **Bridge** (`ControlPanel.qml`, a sheet, not a tab): Wi-Fi, Bluetooth, appearance, NT-D, volume, mic, brightness, power profiles, displays, GN Sense. The island grows to fit it. `qs -c dap ipc call shell bridge` (or `cc`) opens it.
 - **Veda** (`NotchSystem.qml`): gauges for CPU load, CPU temperature, memory and Iris Xe. The NVIDIA GPU is not read, since reading it wakes the card.
 - **Hangar** (`NotchHangar.qml`): every app, with search. The island opens extra wide on this tab. Type to filter, Enter launches the highlighted app, arrows move.

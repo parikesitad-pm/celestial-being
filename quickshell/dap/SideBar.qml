@@ -112,8 +112,10 @@ PanelWindow {
                 id: apps
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 36
-                Layout.fillHeight: true
-                Layout.maximumHeight: contentHeight
+                // Takes what the apps need and shrinks (then scrolls) only when the name slot and tray
+                // below leave too little room.
+                Layout.preferredHeight: contentHeight
+                Layout.minimumHeight: 36
                 spacing: 6
                 clip: true
                 interactive: contentHeight > height
@@ -160,14 +162,21 @@ PanelWindow {
                 }
             }
 
-            // Desktop name, written along the bar.
+            // Desktop name, written along the bar, centred in the free space between apps and tray;
+            // never smaller than the longest name plus a small gap.
+            TextMetrics {
+                id: longestName
+                font: deskName.font
+                text: Ui.deskNames.reduce((a, b) => b.length > a.length ? b : a, "")
+            }
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.minimumHeight: Math.ceil(longestName.advanceWidth) + 12
                 Text {
+                    id: deskName
                     anchors.centerIn: parent
                     rotation: -90
-                    visible: implicitWidth < parent.height - 8
                     text: bar.activeId ? Ui.deskName(bar.activeId) : ""
                     font.family: Theme.font; font.pixelSize: 12; font.weight: Font.Bold; font.letterSpacing: 1.5
                     color: bar.activeId ? Ui.deskColor(bar.activeId) : Theme.accent
