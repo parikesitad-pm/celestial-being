@@ -3,7 +3,7 @@
   "logo": { "source": "arch", "type": "builtin", "color": { "1": "yellow", "2": "yellow" }, "padding": { "top": 1, "left": 2, "right": 3 } },
   "display": { "separator": "  ", "color": { "keys": "cyan", "title": "white" } },
   "modules": [
-    { "type": "custom", "format": "\u001b[93mDAP-01\u001b[0m  \u001b[97mdap_\u001b[0m  \u001b[90m//\u001b[0m  \u001b[96md-ap.my.id\u001b[0m" },
+    { "type": "custom", "format": "\u001b[93mGN-013 Arc[H]\u001b[0m  \u001b[97mdap_\u001b[0m  \u001b[90m//\u001b[0m  \u001b[96md-ap.my.id\u001b[0m" },
     "break",
     { "type": "os",       "key": "FRAME    " },
     { "type": "kernel",   "key": "KERNEL   " },

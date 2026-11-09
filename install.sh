@@ -118,7 +118,6 @@ PILOT="${PILOT:-${USER:-pilot}}"
 valid_pilot "$PILOT" || die "pilot name: letters, numbers, _ . - only (max 20)"
 valid_site "$SITE" || die "site: letters, numbers, _ . / : - only (max 40)"
 SITE="${SITE:-arch-ark}"
-CALLSIGN="$(printf '%s' "${PILOT//[^A-Za-z0-9]/}" | cut -c1-3 | tr '[:lower:]' '[:upper:]')-01"
 
 printf '\033[1;33m'
 cat <<'EOF'
@@ -128,7 +127,7 @@ cat <<'EOF'
 EOF
 printf '\033[0m'
 (( DRY )) && info "dry run: nothing will be changed"
-info "pilot: $PILOT   callsign: $CALLSIGN   site: $SITE"
+info "pilot: $PILOT   site: $SITE"
 
 if (( PACKAGES )); then
   say "1/5 Packages from the Arch repositories"
@@ -184,12 +183,12 @@ personalize "$C/fish/conf.d/hud.fish"               "s|PILOT dap_|PILOT $PILOT|"
 personalize "$C/quickshell/dap/Island.qml"          "s|PILOT dap_|PILOT $PILOT|"
 personalize "$C/quickshell/dap/IslandHeader.qml"    "s|PILOT dap_|PILOT $PILOT|"
 personalize "$C/quickshell/dap/Bar.qml"             "s|text: \"dap_\"|text: \"$PILOT\"|"
-personalize "$C/fastfetch/hud.jsonc"                "s|DAP-01|$CALLSIGN|" "s|mdap_|m$PILOT|" "s|d-ap\.my\.id|$SITE|"
+personalize "$C/fastfetch/hud.jsonc"                "s|mdap_|m$PILOT|" "s|d-ap\.my\.id|$SITE|"
 personalize "$C/fastfetch/config.jsonc"             "s|  dap_|  $PILOT|" "s|d-ap\.my\.id|$SITE|"
 personalize "$C/waybar/config.jsonc"                "s|  dap_\"|  $PILOT\"|" "s|d-ap\.my\.id|$SITE|"
 personalize "$C/hypr/hyprlock.conf"                 "s|<i>dap_</i>|<i>$PILOT</i>|" "s|text = d-ap\.my\.id|text = $SITE|"
 personalize "$C/quickshell/dap-lock/components/organisms/LockStack.qml" "s|text: \"d-ap\.my\.id\"|text: \"$SITE\"|"
-info "name on screen: $PILOT ($CALLSIGN)"
+info "name on screen: $PILOT"
 
 say "4/5 State folders and services"
 run mkdir -p "$HOME/.local/state" "$HOME/.local/share/dap-shell" "$HOME/Pictures/wallpapers" "$HOME/.config/dap-shell"
