@@ -145,11 +145,12 @@ def radar(rows, cols, angle, blips):
                         color = c
             line.append((chr(0x2800 + mask) if mask else " ", color))
         grid.append(line)
-    # Labels never overwrite each other: a clash moves the label one row down, else it is skipped.
+    # Labels never touch each other: a clash moves the label one row down, else it is skipped.
+    # A short radar has room for fewer names (one per three rows); the blips still show.
     taken = set()
-    for r, c, color, text in labels:
+    for r, c, color, text in labels[: max(1, rows // 3)]:
         for row in (r, r + 1, r - 1):
-            cells = {(row, c + i) for i in range(len(text)) if 0 <= c + i < cols}
+            cells = {(row, c + i) for i in range(-1, len(text) + 1) if 0 <= c + i < cols}
             if 0 <= row < rows and cells and not (cells & taken):
                 taken |= cells
                 for i, ch in enumerate(text):
@@ -159,25 +160,66 @@ def radar(rows, cols, angle, blips):
     return ["".join(color + ch for ch, color in line) + RESET for line in grid]
 
 
-def activity(log, width, now):
-    """One row of braille dots: commands per 30 s, newest on the right."""
-    buckets = [0] * width
-    for ts, _, _, _ in log:
-        age = (now - ts) // 30
-        if 0 <= age < width:
-            buckets[width - 1 - age] += 1
-    levels = (0x40, 0x04, 0x02, 0x01)  # bottom dot up to top dot (left column)
-    out = []
-    for i, n in enumerate(buckets):
-        lvl = min(3, n)
-        mark = chr(0x2800 + levels[lvl])
-        if i == width - 1:
-            mark = chr(0x2800 + 0x47)  # the "now" head
-        out.append(mark)
-    return ORANGE + "".join(out) + RESET
+def activity(log, width, now, clock):
+    """One braille row, two samples per cell (5 s each), newest on the right.
+
+    The trace rests on a middle baseline; commands raise it (more commands, higher), failures
+    pull it down in red, and a sonar ping travels right to left so the line is never still.
+    """
+    step = 5
+    n = width * 2
+    hits, fails = [0] * n, [False] * n
+    for ts, rc, _, _ in log:
+        age = (now - ts) // step
+        if 0 <= age < n:
+            k = n - 1 - age
+            hits[k] += 1
+            if rc not in (0, 130):
+                fails[k] = True
+    # Row of four dots per sample, 0 = top. Baseline sits on row 2.
+    ping = n - 1 - int(clock * 6) % (n + 12)
+    level = []
+    for k in range(n):
+        if fails[k]:
+            lvl = 3
+        elif hits[k]:
+            lvl = 1 if hits[k] == 1 else 0
+        else:
+            lvl = 2
+            if abs(k - ping) <= 1:
+                lvl = 1  # the ping echo
+        level.append(lvl)
+    left = (0x01, 0x02, 0x04, 0x40)   # rows 0-3, left column
+    right = (0x08, 0x10, 0x20, 0x80)  # rows 0-3, right column
+
+    def column(bits, a, b):
+        lo, hi = min(a, b), max(a, b)  # fill between neighbours so the trace stays joined
+        mask = 0
+        for r in range(lo, hi + 1):
+            mask |= bits[r]
+        return mask
+
+    cells = []
+    for c in range(width):
+        k = 2 * c
+        a, b = level[k], level[k + 1]
+        prev = level[k - 1] if k else a
+        mask = column(left, prev, a) | column(right, a, b)
+        if c == width - 1:
+            color = CYAN
+        elif fails[k] or fails[k + 1]:
+            color = RED
+        elif hits[k] or hits[k + 1]:
+            color = GREEN
+        elif abs(k - ping) <= 2:
+            color = fg(85)
+        else:
+            color = fg(29)
+        cells.append(color + chr(0x2800 + mask))
+    return "".join(cells) + RESET
 
 
-def frame(angle, log, active, cols, lines):
+def frame(angle, log, active, cols, lines, clock=0.0):
     now = int(time.time())
     midnight = int(time.mktime(time.localtime(now)[:3] + (0, 0, 0, 0, 0, -1)))
     today = [e for e in log if e[0] >= midnight]
@@ -199,8 +241,10 @@ def frame(angle, log, active, cols, lines):
     out.append(box(f"{MUTE}│{RESET} Threat {head_color}{threat:<14}{RESET}{MUTE}Sorties{RESET} {len(today)} today · {len(faults)} faults"))
 
     rows = max(5, lines - 6)
-    left_w, right_w = 13, 7
+    left_w, right_w = 13, 16
     cols_radar = max(10, min(w - left_w - right_w - 2, rows * 2 + 2))
+    # Whatever width is left after stats, radar and legend becomes the SORTIES list.
+    list_w = w - 3 - left_w - cols_radar - 1 - right_w - 2
     recent = list(reversed(log[-6:]))
     blips = []
     for i, (ts, rc, took, cmd) in enumerate(recent):
@@ -234,17 +278,36 @@ def frame(angle, log, active, cols, lines):
         c = category(e[3])
         if c is not None:
             counts[c] += 1
+    # Legend: count today and a small bar (one block per command, five at most).
     right = []
     for (label, color, _), n in zip(CATS, counts):
-        right += [f"{color}⠿{RESET} {(label if n else MUTE + label + RESET):<4}", ""]
+        name = color + label if n else MUTE + label
+        bar = color + "▪" * min(n, 5) + MUTE + "·" * (5 - min(n, 5))
+        right += [f"{color}⠿{RESET} {name:<{4 + len(name) - len(label)}}{RESET} {MUTE}{n:02d}{RESET} {bar}{RESET}", ""]
+
+    # SORTIES: newest first, one per row: time, ✓/✗, duration, command.
+    sorties = []
+    if list_w >= 24:
+        sorties.append(f"{MUTE}SORTIES{RESET}")
+        for ts, rc, took, cmd in reversed(log[-(rows - 1):]):
+            ok = rc in (0, 130)
+            mark = f"{GREEN}✓" if ok else f"{RED}✗"
+            hhmm = time.strftime("%H:%M", time.localtime(ts))
+            text = short(cmd, list_w - 16)
+            sorties.append(f"{MUTE}{hhmm}{RESET} {mark}{RESET} {MUTE}{took:>6}{RESET} {TEXT if ok else RED}{text}{RESET}")
 
     for i in range(rows):
         l = left[i] if i < len(left) else ""
         r = right[i] if i < len(right) else ""
+        q = sorties[i] if i < len(sorties) else ""
         pad = left_w + (len(l) - visible_len(l))
-        out.append(box(f"{MUTE}│{RESET} {l:<{pad}}{sonar[i]} {r}"))
+        rpad = right_w + (len(r) - visible_len(r))
+        line = f"{MUTE}│{RESET} {l:<{pad}}{sonar[i]} {r:<{rpad}}"
+        if q:
+            line += f"{MUTE}│{RESET} {q}"
+        out.append(box(line))
 
-    out.append(box(f"{MUTE}│{RESET} " + activity(log, max(10, w - 4), now)))
+    out.append(box(f"{MUTE}│{RESET} " + activity(log, max(10, w - 4), now, clock)))
     out.append(f"{head_color}╰{'─' * (w - 2)}╯{RESET}")
     return out
 
@@ -291,7 +354,7 @@ def main():
             time.sleep(1)
             continue
         angle = ((time.monotonic() - start) / TURN * 360) % 360
-        lines = frame(angle, log, active, size.columns, size.lines)
+        lines = frame(angle, log, active, size.columns, size.lines, time.monotonic() - start)
         sys.stdout.write(ESC + "H" + "\n".join(l + ESC + "K" for l in lines) + ESC + "J")
         sys.stdout.flush()
         time.sleep(1 / FPS)
