@@ -1,18 +1,23 @@
 import QtQuick
 import QtQuick.Layouts
 
-// Widened island showing the newest notification for a few seconds.
+// Widened island showing the newest notification, or a system event (network, drive, power,
+// volume) for a few seconds. System titles decode out of noise; volume shows a level bar.
 RowLayout {
     id: toast
     property var notif: null
+    readonly property bool system: !!notif && !!notif.system
+    readonly property bool vol: system && notif.kind === "volume"
     spacing: 12
+    // A new event replays the decode; repeated volume changes only move the bar.
+    onNotifChanged: if (notif && notif.system && notif.kind !== "volume") title.play()
 
     Item {
         Layout.preferredWidth: 36; Layout.preferredHeight: 36
         Image {
             id: icon
             anchors.fill: parent
-            source: toast.notif ? Ui.iconSource(toast.notif.icon) : ""
+            source: toast.notif && !toast.system ? Ui.iconSource(toast.notif.icon) : ""
             sourceSize: Qt.size(72, 72)
             fillMode: Image.PreserveAspectFit
             asynchronous: true
@@ -24,7 +29,7 @@ RowLayout {
             visible: icon.status !== Image.Ready
             Text {
                 anchors.centerIn: parent
-                text: Theme.g(0xF009A)
+                text: Theme.g(toast.system && toast.notif.glyph ? toast.notif.glyph : 0xF009A)
                 font.family: Theme.iconFont; font.pixelSize: 17
                 color: Theme.accent
             }
@@ -34,16 +39,31 @@ RowLayout {
     ColumnLayout {
         Layout.fillWidth: true
         spacing: 1
-        Text {
+        DecodeText {
+            id: title
             Layout.fillWidth: true
-            text: toast.notif ? (toast.notif.summary || toast.notif.app) : ""
+            target: toast.notif ? (toast.notif.summary || toast.notif.app) : ""
             elide: Text.ElideRight
             font.family: Theme.font; font.pixelSize: 13; font.weight: Font.Bold
+            font.letterSpacing: toast.system ? 1.2 : 0
             color: Theme.text
+        }
+        Rectangle {
+            visible: toast.vol
+            Layout.fillWidth: true
+            Layout.preferredHeight: 6
+            radius: 3
+            color: Theme.tile
+            Rectangle {
+                height: parent.height; radius: 3
+                color: Theme.accent
+                width: parent.width * (toast.vol ? toast.notif.level : 0)
+                Behavior on width { NumberAnimation { duration: 90; easing.type: Easing.OutCubic } }
+            }
         }
         Text {
             Layout.fillWidth: true
-            visible: text !== ""
+            visible: text !== "" && !toast.vol
             text: toast.notif ? (toast.notif.body || "").replace(/\s+/g, " ") : ""
             textFormat: Text.PlainText
             elide: Text.ElideRight
@@ -54,7 +74,7 @@ RowLayout {
 
     Text {
         visible: actionRow.count === 0
-        text: toast.notif ? toast.notif.app : ""
+        text: !toast.notif ? "" : toast.vol ? toast.notif.body : toast.notif.app
         font.family: Theme.font; font.pixelSize: 10
         color: Theme.subtext
     }

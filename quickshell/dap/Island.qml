@@ -26,6 +26,8 @@ PanelWindow {
     HyprlandFocusGrab { windows: [win]; active: Ui.island && Ui.sheet !== "search"; onCleared: Ui.cleared("island") }
 
     readonly property string mode: Ui.island ? "open" : (Ui.toast ? "toast" : "pill")
+    // Volume uses a slimmer toast, so a frequent key press costs a small, quick shape change.
+    readonly property bool volToast: !!Ui.toast && Ui.toast.kind === "volume"
     readonly property bool narrow: !!screen && screen.width < 1300
     readonly property var tabs: ["Haro", "Mission", "Sortie", "Orders", "Comms", "Veda", "Hangar"]
     readonly property int tab: Ui.islandTab
@@ -72,8 +74,8 @@ PanelWindow {
         // Floats 6 px below the screen edge, like the sidebar's margins.
         y: 6
         // Hangar (apps only) opens extra wide.
-        width: win.mode === "open" ? (win.tab === 6 && Ui.sheet === "" ? 900 : 600) : win.mode === "toast" ? 460 : pill.implicitWidth + 40
-        height: win.mode === "open" ? win.openHeight : win.mode === "toast" ? 64 : 36
+        width: win.mode === "open" ? (win.tab === 6 && Ui.sheet === "" ? 900 : 600) : win.mode === "toast" ? (win.volToast ? 360 : 460) : pill.implicitWidth + 40
+        height: win.mode === "open" ? win.openHeight : win.mode === "toast" ? (win.volToast ? 52 : 64) : 36
         radius: win.mode === "open" ? 28 : win.mode === "toast" ? 24 : 18
         Behavior on width { Spring {} }
         Behavior on height { Spring {} }
@@ -110,6 +112,8 @@ PanelWindow {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: {
+                // System events (volume, network, drives) have nothing to open: a click dismisses them.
+                if (win.mode === "toast" && Ui.toast.system) { Ui.toast = null; return }
                 if (win.mode === "toast") Ui.islandTab = 4
                 Ui.toggle("island")
             }

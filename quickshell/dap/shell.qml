@@ -6,7 +6,7 @@ ShellRoot {
     Variants { model: Ui.barScreens; SideBar {} }
     Calendar {}
     Island {}
-    VolumeOsd {}
+    Events { id: events }
     Variants { model: Quickshell.screens; Overview {} }
     Screenshot {}
     RegionSelect {}
@@ -30,6 +30,10 @@ ShellRoot {
         // Region picker: "shot" (screenshot) or "record".
         function select(mode: string): void { Ui.closeAll(); Ui.select = mode }
         function cc(): void { Ui.toggle("cc") }
+        // Preview an event toast and its sound: lan-up, lan-down, wifi-up, wifi-down, dock, release, charge, discharge.
+        function demo(kind: string): void { events.demo(kind) }
+        // From the fish HUD: a command over 10 s finished while the terminal was not focused.
+        function sortie(result: string, cmd: string, took: string): void { events.sortie(result === "ok", cmd, took) }
         function screenshot(): void { Ui.toggle("shot") }
         function overview(): void { Ui.toggle("overview") }
         function overviewOpen(): void { if (!Ui.overview) Ui.toggle("overview") }

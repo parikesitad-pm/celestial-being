@@ -15,7 +15,7 @@ NotchCalendar NotchCalendar.qml
 NotchFocus NotchFocus.qml
 NotchTodo NotchTodo.qml
 CavaBars CavaBars.qml
-VolumeOsd VolumeOsd.qml
+Events Events.qml
 PageHeader PageHeader.qml
 PickRow PickRow.qml
 Tile Tile.qml

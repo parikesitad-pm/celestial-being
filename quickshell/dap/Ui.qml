@@ -80,6 +80,24 @@ Singleton {
         }
     }
     Timer { id: toastTimer; interval: 3500; onTriggered: s.toast = null }
+
+    // System events (network, drives, power, volume) use the same island toast as notifications.
+    // a: { kind, glyph, summary, body, app, sound, level, critical }
+    function alert(a) {
+        if (a.sound && (!dnd || a.critical)) play(a.sound)
+        if (island || (dnd && !a.critical)) return
+        // A volume change while another alert is showing only updates the sound, not the toast.
+        if (a.kind === "volume" && toast && toast.system && toast.kind !== "volume") return
+        toast = Object.assign({ id: "sys-" + a.kind, system: true, app: "", body: "", actions: [], critical: false, time: new Date() }, a)
+        toastTimer.interval = a.kind === "volume" ? 1200 : a.critical ? 6000 : 3000
+        toastTimer.restart()
+    }
+    // Your own clip in ~/.local/share/dap-shell/sounds/<name>.(ogg|wav|flac) wins over the built-in one.
+    function play(name) {
+        Quickshell.execDetached(["sh", "-c",
+            'f="$HOME/.local/share/dap-shell/sounds/$1"; for e in ogg wav flac; do [ -f "$f.$e" ] && exec pw-play "$f.$e"; done; exec pw-play "$2"',
+            "sh", name, Quickshell.shellDir + "/sounds/" + name + ".wav"])
+    }
     function mmss(sec) {
         const t = Math.max(0, Math.floor(sec || 0))
         return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0")
@@ -190,6 +208,7 @@ Singleton {
     property int temp: 0
     property int battery: -1
     property bool charging: false
+    property string batStatus: ""   // Charging, Discharging, Full, Not charging (sysfs)
 
     // GN particles low: one critical alarm at 15% and one at 5% while discharging.
     // Re-arms once the charger is in or the battery is back above 20%.
@@ -285,6 +304,7 @@ Singleton {
                 s.temp = parseInt(p[2]) || 0
                 s.battery = p[3] === "" ? -1 : parseInt(p[3])
                 s.charging = p[4] === "Charging"
+                s.batStatus = p[4]
                 const ig = parseInt(p[5])
                 s.igpu = isNaN(ig) ? -1 : ig
                 const g = parseInt(p[6])
