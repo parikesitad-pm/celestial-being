@@ -15,7 +15,7 @@ end
 hl.monitor({ output = "",      mode = "preferred",      position = "auto-" .. external_side(), scale = 1 })
 
 ------------------ PROGRAMS ------------------
-local terminal    = "kitty"
+local terminal    = "ghostty"
 local fileManager = "dolphin"
 local menu        = "qs -c dap ipc call shell launcher"
 local browser     = "zen-browser"
